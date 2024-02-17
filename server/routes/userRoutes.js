@@ -1,15 +1,12 @@
 // userRoutes.js
-// Purpose: This file handles routes related to user management, such as retrieving user profiles, updating user information, etc.
 const express = require('express');
 const router = express.Router();
+const userController = require('../controllers/userController');
 
-// Define user-related routes
-router.get('/', (req, res) => {
-    // Retrieve all users
-});
+// create users
+router.post('/users', userController.createUser);
 
-router.get('/:id', (req, res) => {
-    // Retrieve a specific user by ID
-});
+// retrieve users
+router.get('/users', userController.getAllUsers);
 
 module.exports = router;

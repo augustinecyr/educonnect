@@ -1,15 +1,23 @@
 // postRoutes.js
-//Purpose: This file handles routes related to posts or content management, such as creating, reading, updating, and deleting posts.
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+const postController = require("../controllers/postController");
 
-// Define post-related routes
-router.get('/', (req, res) => {
-    // Retrieve all posts
-});
+// Create a new post
+router.post("/posts", postController.createPost);
 
-router.post('/', (req, res) => {
-    // Create a new post
-});
+// Get all posts
+router.get("/posts", postController.getAllPosts);
+
+// Get post by ID
+router.get("/posts/:id", postController.getPostById);
+
+// Update post by ID
+router.put("/posts/:id", postController.updatePostById);
+
+// Delete post by ID
+router.delete("/posts/:id", postController.deletePostById);
+
+// Add more routes as needed
 
 module.exports = router;

@@ -1,15 +1,17 @@
 // authRoutes.js
-// Purpose: This file handles routes related to user authentication, such as login, registration, logout, password reset, etc.
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+const authController = require("../controllers/authController");
 
-// Define authentication routes
-router.post('/login', (req, res) => {
-    // Handle login logic here
-});
+// Register a new user
+router.post("/register", authController.registerUser);
 
-router.post('/register', (req, res) => {
-    // Handle user registration logic here
-});
+// Login a user
+router.post("/login", authController.loginUser);
+
+// Logout a user (optional)
+router.post("/logout", authController.logoutUser);
+
+// Add more routes as needed
 
 module.exports = router;
