@@ -1,6 +1,6 @@
-import * as React from "react";
-import Avatar from "@mui/material/Avatar";
+import React, { useState } from "react";
 import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -12,6 +12,8 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -23,7 +25,7 @@ function Copyright(props) {
     >
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        EduConnect
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -31,19 +33,28 @@ function Copyright(props) {
   );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
 const defaultTheme = createTheme();
 
-export default function SignInSide() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+export default function Login() {
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const [loggedIn, setLoggedIn] = useState(false);
+  const onSubmit = (data) => {
+    // Handle form submission
+    const { email, password } = data;
+    // Hardcoded email and password for demo purposes
+    if (email === "admin@educonnect.sg" && password === "admin") {
+      setLoggedIn(true);
+    }
   };
+
+  if (loggedIn) {
+     navigate('/home');
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -85,7 +96,7 @@ export default function SignInSide() {
             <Box
               component="form"
               noValidate
-              onSubmit={handleSubmit}
+              onSubmit={handleSubmit(onSubmit)}
               sx={{ mt: 1 }}
             >
               <TextField
@@ -97,6 +108,19 @@ export default function SignInSide() {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                type="email" // Ensure input type is set to email for email validation
+                inputProps={{
+                  pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$", // Regular expression pattern for email validation
+                }}
+                error={!!errors.email} // Conditionally apply error state based on errors object
+                helperText={errors.email ? "Invalid email address" : ""} // Display error message if email is invalid
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/,
+                    message: "Invalid email address",
+                  },
+                })}
               />
               <TextField
                 margin="normal"
@@ -107,6 +131,22 @@ export default function SignInSide() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                inputProps={{
+                  minLength: 6, // Minimum password length
+                }}
+                error={!!errors.password} // Conditionally apply error state based on errors object
+                helperText={
+                  errors.password
+                    ? "Password must be at least 6 characters long"
+                    : ""
+                } // Display error message if password is invalid
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 5,
+                    message: "Password must be at least 5 characters long",
+                  },
+                })}
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
