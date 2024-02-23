@@ -1,64 +1,57 @@
-import * as React from 'react';
-import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
-import Container from '@mui/material/Container';
-import { ThemeProvider } from '@mui/material/styles';
-import Header from '../components/Header';
-import MainFeaturedPost from '../components/MainFeaturedPost';
-import FeaturedPost from '../components/FeaturedPost';
-import Main from '../components/Main';
-import Footer from '../components/Footer';
-import post1 from '../components/blog-post.1.md';
-import post2 from '../components/blog-post.2.md';
-import post3 from '../components/blog-post.3.md';
-import theme from '../themes/Theme';
+import * as React from "react";
+import CssBaseline from "@mui/material/CssBaseline";
+import Grid from "@mui/material/Grid";
+import Container from "@mui/material/Container";
+import { ThemeProvider } from "@mui/material/styles";
+import Header from "../components/Header";
+import MainFeaturedPost from "../components/MainFeaturedPost";
+import FeaturedPost from "../components/FeaturedPost";
+import Footer from "../components/Footer";
+import theme from "../themes/Theme";
 
 const sections = [
-  { title: 'Courses', url: '#' },
-  { title: 'Analytics', url: '#' },
-  { title: 'Resources', url: '#' },
-  { title: 'Feature x', url: '#' },
-  { title: 'Feature x', url: '#' },
-  { title: 'Feature x', url: '#' },
-  { title: 'Profile', url: '#' },
+  { title: "Courses", url: "#" },
+  { title: "Analytics", url: "#" },
+  { title: "Resources", url: "#" },
+  { title: "Feature x", url: "#" },
+  { title: "Feature x", url: "#" },
+  { title: "Feature x", url: "#" },
+  { title: "Profile", url: "#" },
 ];
 
 const mainFeaturedPost = {
-  title: 'Title of a longer featured blog post',
+  title: "Welcome to EduConnect",
   description:
-    "Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.",
-  image: 'https://source.unsplash.com/random?wallpapers',
-  imageText: 'main image description',
-  linkText: 'Continue reading…',
+    "Education transcends the traditional classroom. Embrace a future of limitless learning opportunities and embark on a journey towards realizing your full potential.",
+  image: "https://source.unsplash.com/random?wallpapers",
+  linkText: "Start Learning",
 };
 
 const featuredPosts = [
   {
-    title: 'Featured post',
-    date: 'Nov 12',
+    title: "Article 1",
+    date: "Nov 12",
     description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content.',
-    image: 'https://source.unsplash.com/random?wallpapers',
-    imageLabel: 'Image Text',
+      "This is a wider card with supporting text below as a natural lead-in to additional content.",
+    image: "https://source.unsplash.com/random?wallpapers",
+    imageLabel: "Image Text",
   },
   {
-    title: 'Post title',
-    date: 'Nov 11',
+    title: "Article 2",
+    date: "Nov 11",
     description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content.',
-    image: 'https://source.unsplash.com/random?wallpapers',
-    imageLabel: 'Image Text',
+      "This is a wider card with supporting text below as a natural lead-in to additional content.",
+    image: "https://source.unsplash.com/random?wallpapers",
+    imageLabel: "Image Text",
   },
 ];
 
-const posts = [post1, post2, post3];
-
 export default function Home() {
   return (
-     <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container maxWidth="lg">
-        <Header title="EduConnect" sections={sections} />
+        <Header title={""} sections={sections} />{" "}
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
           <Grid container spacing={4}>
@@ -66,15 +59,10 @@ export default function Home() {
               <FeaturedPost key={post.title} post={post} />
             ))}
           </Grid>
-          <Grid container spacing={5} sx={{ mt: 3 }}>
-            <Main title="From the firehose" posts={posts} />
-          </Grid>
+          <Grid container spacing={5} sx={{ mt: 3 }}></Grid>
         </main>
       </Container>
-      <Footer
-        title="Footer"
-        description="Something here to give the footer a purpose!"
-      />
-   </ThemeProvider>
+      <Footer />
+    </ThemeProvider>
   );
 }

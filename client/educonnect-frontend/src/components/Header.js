@@ -1,18 +1,19 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import SearchIcon from '@mui/icons-material/Search';
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
+import * as React from "react";
+import PropTypes from "prop-types";
+import Toolbar from "@mui/material/Toolbar";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
+import logo from "../images/educonnect.jpg";
+import '../index.css';
+
 
 function Header(props) {
   const { sections, title } = props;
 
   return (
     <React.Fragment>
-      <Toolbar sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      <Toolbar sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Button size="small">Subscribe</Button>
         <Typography
           component="h2"
@@ -22,11 +23,15 @@ function Header(props) {
           noWrap
           sx={{ flex: 1 }}
         >
+          <Link href="http://localhost:3000/home" className="logo-link">
+            <img
+              src={logo}
+              alt="EduConnect Logo"
+              style={{ width: "50px", height: "auto" }}
+            />
+          </Link>
           {title}
         </Typography>
-        <IconButton>
-          <SearchIcon />
-        </IconButton>
         <Button variant="outlined" size="small">
           Sign up
         </Button>
@@ -34,7 +39,7 @@ function Header(props) {
       <Toolbar
         component="nav"
         variant="dense"
-        sx={{ justifyContent: 'space-between', overflowX: 'auto' }}
+        sx={{ justifyContent: "space-between", overflowX: "auto" }}
       >
         {sections.map((section) => (
           <Link
@@ -58,7 +63,7 @@ Header.propTypes = {
     PropTypes.shape({
       title: PropTypes.string.isRequired,
       url: PropTypes.string.isRequired,
-    }),
+    })
   ).isRequired,
   title: PropTypes.string.isRequired,
 };

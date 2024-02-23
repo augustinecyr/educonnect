@@ -25,7 +25,7 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="https://localhost:3000/">
         EduConnect
       </Link>{" "}
       {new Date().getFullYear()}
