@@ -11,9 +11,10 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import theme from "../themes/Theme";
 
 function Copyright(props) {
   return (
@@ -33,8 +34,6 @@ function Copyright(props) {
   );
 }
 
-const defaultTheme = createTheme();
-
 export default function Login() {
   const navigate = useNavigate();
   const {
@@ -47,7 +46,7 @@ export default function Login() {
     // Handle form submission
     const { email, password } = data;
     // Hardcoded email and password for demo purposes
-    if (email === "admin@educonnect.sg" && password === "admin") {
+    if (email === "admin@educonnect.sg" && password === "123456") {
       setLoggedIn(true);
     }
   };
@@ -57,7 +56,7 @@ export default function Login() {
   }
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         <Grid
@@ -143,8 +142,8 @@ export default function Login() {
                 {...register("password", {
                   required: "Password is required",
                   minLength: {
-                    value: 5,
-                    message: "Password must be at least 5 characters long",
+                    value: 6,
+                    message: "Password must be at least 6 characters long",
                   },
                 })}
               />
