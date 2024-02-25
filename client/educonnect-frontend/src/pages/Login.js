@@ -15,6 +15,9 @@ import { ThemeProvider } from "@mui/material/styles";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import theme from "../themes/Theme";
+import authServiceInstance from "../services/AuthService"; // Import your AuthService
+import Visibility from "@mui/icons-material/Visibility"; // Import visibility icon
+import VisibilityOff from "@mui/icons-material/VisibilityOff"; // Import visibility off icon
 
 function Copyright(props) {
   return (
@@ -34,26 +37,31 @@ function Copyright(props) {
   );
 }
 
-export default function Login() {
+function Login() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false); // State variable for password visibility
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [loggedIn, setLoggedIn] = useState(false);
-  const onSubmit = (data) => {
-    // Handle form submission
-    const { email, password } = data;
-    // Hardcoded email and password for demo purposes
-    if (email === "admin@educonnect.sg" && password === "123456") {
-      setLoggedIn(true);
+
+  const onSubmit = async (data) => {
+    try {
+      const { email, password } = data;
+      // Call the login method of AuthService
+      await authServiceInstance.login(email, password);
+      // If login successful, redirect to home page
+      navigate("/home");
+    } catch (error) {
+      console.error("Login failed:", error.message);
+      // Handle login error (e.g., display error message)
     }
   };
 
-  if (loggedIn) {
-     navigate('/home');
-  }
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword); // Toggle password visibility
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -107,16 +115,18 @@ export default function Login() {
                 name="email"
                 autoComplete="email"
                 autoFocus
-                type="email" // Ensure input type is set to email for email validation
+                type="email"
                 inputProps={{
-                  pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$", // Regular expression pattern for email validation
+                  pattern:
+                    "/^[A-Z0-9._%+-]+@[A-Z0-9.-]+[A-Z]{2,4}$/i;",
                 }}
-                error={!!errors.email} // Conditionally apply error state based on errors object
-                helperText={errors.email ? "Invalid email address" : ""} // Display error message if email is invalid
+                error={!!errors.email}
+                helperText={errors.email ? errors.email.message : ""}
                 {...register("email", {
                   required: "Email is required",
                   pattern: {
-                    value: /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/,
+                    value:
+                      "/^[A-Z0-9._%+-]+@[A-Z0-9.-]+[A-Z]{2,4}$/i;",
                     message: "Invalid email address",
                   },
                 })}
@@ -127,18 +137,18 @@ export default function Login() {
                 fullWidth
                 name="password"
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"} // Toggle password visibility
                 id="password"
                 autoComplete="current-password"
                 inputProps={{
-                  minLength: 6, // Minimum password length
+                  minLength: 6,
                 }}
-                error={!!errors.password} // Conditionally apply error state based on errors object
+                error={!!errors.password}
                 helperText={
                   errors.password
                     ? "Password must be at least 6 characters long"
                     : ""
-                } // Display error message if password is invalid
+                }
                 {...register("password", {
                   required: "Password is required",
                   minLength: {
@@ -146,6 +156,21 @@ export default function Login() {
                     message: "Password must be at least 6 characters long",
                   },
                 })}
+                InputProps={{
+                  // Show/hide password icon
+                  endAdornment: (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          icon={<VisibilityOff />}
+                          checkedIcon={<Visibility />}
+                          onClick={togglePasswordVisibility}
+                          edge="end"
+                        />
+                      }
+                    />
+                  ),
+                }}
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
@@ -179,3 +204,5 @@ export default function Login() {
     </ThemeProvider>
   );
 }
+
+export default Login;
