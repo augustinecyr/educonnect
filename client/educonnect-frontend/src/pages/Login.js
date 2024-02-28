@@ -54,7 +54,7 @@ function Login() {
       // If login successful, redirect to home page
       navigate("/home");
     } catch (error) {
-      console.error("Login failed:", error.message);
+      console.error("Login has failed:", error.message);
       // Handle login error (e.g., display error message)
     }
   };
