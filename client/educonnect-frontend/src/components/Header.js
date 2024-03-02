@@ -33,7 +33,7 @@ function Header(props) {
           {title}
         </Typography>
         <Button variant="outlined" size="small">
-          Sign up
+          Log Out
         </Button>
       </Toolbar>
       <Toolbar

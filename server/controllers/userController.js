@@ -1,16 +1,29 @@
-// userController.js
-/* Manages general user-related operations that are not directly related to authentication, 
-such as creating users, retrieving user profiles, '=updating user information, etc. 
-It handles CRUD operations on user data. */
+const User = require("../models/user"); // Assuming you have a User model defined
 
-const User = require("../models/User");
+// Controller function to create a new user
+exports.createUser = (req, res) => {
+  const { name, company, occupation, mobile_number, email, password, createdAt, updatedAt } =
+    req.body;
+  
+  const userData = {
+    name,
+    company,
+    occupation,
+    mobile_number,
+    email,
+    password,
+    createdAt,
+    updatedAt,
+  };
 
-exports.createUser = async (req, res) => {
-  // Logic to create a new user
+  // Call the createUser function on the User model
+  User.create(userData, (error, result) => {
+    if (error) {
+      return res.status(500).json({ message: error.message });
+    }
+    return res
+      .status(201)
+      .json({ message: "User created successfully", user: result });
+      
+  });
 };
-
-exports.getAllUsers = async (req, res) => {
-  // Logic to retrieve all users
-};
-
-// Add more controller functions as needed

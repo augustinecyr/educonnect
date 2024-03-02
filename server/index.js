@@ -6,6 +6,7 @@ const mysql = require("mysql");
 // .env file config
 require("dotenv").config();
 const PORT = process.env.PORT;
+const { Sequelize } = require("sequelize");
 
 // Middleware
 app.use(express.json()); // Parse JSON bodies
@@ -16,6 +17,33 @@ app.use(
     credentials: true, // Allow cookies and session tokens to be sent
   })
 );
+
+// Create a Sequelize instance and establish connection to your MySQL database
+const sequelize = new Sequelize({
+  dialect: "mysql",
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+});
+
+// Test the database connection
+async function testConnection() {
+  try {
+    await sequelize.authenticate();
+    console.log(
+      "Connection to the database using sequelize has been established successfully."
+    );
+  } catch (error) {
+    console.error("Unable to connect to the database using sequelize:", error);
+  }
+}
+
+// Export the initialized Sequelize instance
+module.exports = { sequelize, testConnection };
+
+testConnection(); // run the function
 
 // MySQL connection
 const connection = mysql.createConnection({
