@@ -13,7 +13,6 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { ThemeProvider } from "@mui/material/styles";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import theme from "../themes/Theme";
 import UserService from "../services/UserService"; // Import your UserService
 import Visibility from "@mui/icons-material/Visibility"; // Import visibility icon
@@ -23,6 +22,13 @@ import InputAdornment from "@mui/material/InputAdornment";
 import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
 import IconButton from "@mui/material/IconButton";
 import ClearIcon from "@mui/icons-material/Clear";
+import { useNavigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material"; // Import necessary components for pop-up box
 
 function Copyright(props) {
   return (
@@ -43,8 +49,50 @@ function Copyright(props) {
 }
 
 function RegisterUser() {
+  const navigate = useNavigate();
   const [occupation, setOccupation] = useState("");
   const [customOccupation, setCustomOccupation] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // State variable for password visibility
+  const [open, setOpen] = useState(false); // State variable for controlling the visibility of the pop-up box
+  const [success, setSuccess] = useState(false); // State variable for indicating whether registration was successful
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = async (data) => {
+    try {
+      // Form the data object based on the form
+      const { name, company, occupation, mobile_number, email, password } =
+        data;
+      setSuccess(true);
+      setOpen(true);
+      // Call the register method of UserService
+      await UserService.registerUser(
+        name,
+        company,
+        occupation,
+        mobile_number,
+        email,
+        password
+      );
+    } catch (error) {
+      console.error(error.message);
+      // Handle registration error (e.g., display error message)
+      reset();
+      setSuccess(false);
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false); // Close the pop-up box
+    if (success) {
+      navigate("/login"); // If registration was successful, navigate to login page
+    }
+  };
 
   const handleOccupationChange = (event) => {
     const selectedOccupation = event.target.value;
@@ -57,37 +105,6 @@ function RegisterUser() {
 
   const handleCustomOccupationChange = (event) => {
     setCustomOccupation(event.target.value);
-  };
-
-  const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false); // State variable for password visibility
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm();
-  const onSubmit = async (data) => {
-    try {
-      // Form the data object based on the form
-      const { name, company, occupation, mobile_number, email, password } = data;
-
-      // Call the register method of UserService
-      await UserService.registerUser(
-        name,
-        company,
-        occupation,
-        mobile_number,
-        email,
-        password
-      );
-      console.log("form:", data);
-      // If registration successful, redirect to login page
-      navigate("/login");
-    } catch (error) {
-      console.error("Registration has failed:", error.message);
-      // Handle registration error (e.g., display error message)
-    }
   };
 
   const togglePasswordVisibility = () => {
@@ -158,10 +175,10 @@ function RegisterUser() {
                 })}
               />
               <Select
-              fullWidth
+                fullWidth
                 id="occupation"
                 label="Occupation"
-                name= "occupation"
+                name="occupation"
                 {...register("occupation")}
                 value={occupation}
                 onChange={handleOccupationChange}
@@ -240,7 +257,6 @@ function RegisterUser() {
                 {...register("email", {
                   required: "Email is required",
                   pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                     message: "Invalid email address",
                   },
                 })}
@@ -305,6 +321,31 @@ function RegisterUser() {
             </Box>
           </Box>
         </Grid>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>
+            {success ? (
+              <Typography variant="h6" color="primary">
+                Registration Successful!
+              </Typography>
+            ) : (
+              <Typography variant="h6" color="error">
+                Registration Failed
+              </Typography>
+            )}
+          </DialogTitle>
+          <DialogContent>
+            <Typography variant="body1">
+              {success
+                ? "Congratulations! Your registration was successful. You can now log in to your account."
+                : "Oops! It seems there was an error during the registration process. Please try again later."}
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus>
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Grid>
     </ThemeProvider>
   );

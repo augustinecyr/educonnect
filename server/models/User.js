@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../index");
 
 // Define the user model
-const User = sequelize.define("educonnect_users", {
+const EduconnectUser = sequelize.define("educonnect_users", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -39,4 +39,4 @@ const User = sequelize.define("educonnect_users", {
   },
 });
 
-module.exports = User;
+module.exports = EduconnectUser;
