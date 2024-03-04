@@ -13,9 +13,9 @@ const sections = [
   { title: "Courses", url: "#" },
   { title: "Analytics", url: "#" },
   { title: "Resources", url: "#" },
-  { title: "Feature x", url: "#" },
-  { title: "Feature x", url: "#" },
-  { title: "Feature x", url: "#" },
+  { title: "Feature 1", url: "#" },
+  { title: "Feature 2", url: "#" },
+  { title: "Feature 3", url: "#" },
   { title: "Profile", url: "#" },
 ];
 

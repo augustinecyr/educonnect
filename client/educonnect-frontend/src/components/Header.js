@@ -6,11 +6,25 @@ import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import logo from "../images/educonnect.jpg";
 import '../index.css';
-
+import authServiceInstance from "../services/AuthService";
+import { useNavigate } from "react-router-dom";
 
 function Header(props) {
   const { sections, title } = props;
+  const navigate = useNavigate();
 
+  const onLogout = async () => {
+    try {
+      // Call the logout method of AuthService
+      await authServiceInstance.logout();
+      // Redirect to login page or any other desired location
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout has failed:", error.message);
+      // Handle logout error (e.g., display error message)
+    }
+  };
+  
   return (
     <React.Fragment>
       <Toolbar sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -32,7 +46,7 @@ function Header(props) {
           </Link>
           {title}
         </Typography>
-        <Button variant="outlined" size="small">
+        <Button variant="outlined" size="small" onClick={onLogout}>
           Log Out
         </Button>
       </Toolbar>

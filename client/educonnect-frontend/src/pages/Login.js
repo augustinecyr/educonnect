@@ -18,6 +18,7 @@ import theme from "../themes/Theme";
 import authServiceInstance from "../services/AuthService"; // Import your AuthService
 import Visibility from "@mui/icons-material/Visibility"; // Import visibility icon
 import VisibilityOff from "@mui/icons-material/VisibilityOff"; // Import visibility off icon
+import { Dialog, DialogTitle, DialogContent } from "@mui/material"; // Import necessary components for pop-up box
 
 function Copyright(props) {
   return (
@@ -40,6 +41,9 @@ function Copyright(props) {
 function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false); // State variable for password visibility
+  const [open, setOpen] = useState(false); // State variable for controlling the visibility of the pop-up box
+  const [success, setSuccess] = useState(false); // State variable for indicating whether registration was successful
+
   const {
     register,
     handleSubmit,
@@ -49,13 +53,24 @@ function Login() {
   const onSubmit = async (data) => {
     try {
       const { email, password } = data;
+      setSuccess(true);
+      setOpen(true);
       // Call the login method of AuthService
       await authServiceInstance.login(email, password);
+      await new Promise((resolve) => setTimeout(resolve, 2500));
       // If login successful, redirect to home page
       navigate("/home");
     } catch (error) {
       console.error("Login has failed:", error.message);
       // Handle login error (e.g., display error message)
+      setSuccess(false);
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false); // Close the pop-up box
+    if (success) {
+      navigate("/home"); // If registration was successful, navigate to login page
     }
   };
 
@@ -117,16 +132,14 @@ function Login() {
                 autoFocus
                 type="email"
                 inputProps={{
-                  pattern:
-                    "/^[A-Z0-9._%+-]+@[A-Z0-9.-]+[A-Z]{2,4}$/i;",
+                  pattern: "^[a-zA-Z1-9_]+( [a-zA-Z0-9_]+)*$",
                 }}
                 error={!!errors.email}
                 helperText={errors.email ? errors.email.message : ""}
                 {...register("email", {
                   required: "Email is required",
                   pattern: {
-                    value:
-                      "/^[A-Z0-9._%+-]+@[A-Z0-9.-]+[A-Z]{2,4}$/i;",
+                    value: "^[a-zA-Z1-9_]+( [a-zA-Z0-9_]+)*$",
                     message: "Invalid email address",
                   },
                 })}
@@ -200,6 +213,26 @@ function Login() {
             </Box>
           </Box>
         </Grid>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>
+            {success ? (
+              <Typography variant="h6" color="primary">
+                Successful Login
+              </Typography>
+            ) : (
+              <Typography variant="h6" color="error">
+                Error
+              </Typography>
+            )}
+          </DialogTitle>
+          <DialogContent>
+            <Typography variant="body1">
+              {success
+                ? "Welcome! You are now logged in."
+                : "Oops! It seems there was an error during the login process. Please try again later."}
+            </Typography>
+          </DialogContent>
+        </Dialog>
       </Grid>
     </ThemeProvider>
   );
