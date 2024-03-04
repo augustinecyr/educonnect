@@ -1,5 +1,7 @@
 const mysql = require("mysql");
 const { format } = require("date-fns");
+const bcrypt = require("bcrypt");
+
 // Create a MySQL connection pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -10,17 +12,13 @@ const pool = mysql.createPool({
 });
 
 // Login a user
-exports.loginUser = (req, res) => {
+exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
-  // console.log("email:", email);
-  // console.log("password:", password);
-  // console.log("body:", req.body);
 
   const query = "SELECT * FROM users WHERE email = ? AND password = ?";
   const params = [email, password];
 
-  // console.log("SQL Query:", query);
-  // console.log("Parameters:", params);
+  req.body.password = await bcrypt.hash(req.body.password, 10);
 
   // Execute the query using the connection pool
   pool.query(query, params, (error, results) => {
