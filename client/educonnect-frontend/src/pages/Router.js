@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate  } from "react-router-
 import Login from "./Login";
 import Home from "./Home";
 import RegisterUser from "./RegisterUser";
+import Courses from "./Courses";
 
 function AppRouter() {
   return (
@@ -12,6 +13,7 @@ function AppRouter() {
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/register" element={<RegisterUser/>} />
+        <Route path="/courses" element={<Courses/>} />
         {/* Define other routes as needed */}
       </Routes>
     </Router>

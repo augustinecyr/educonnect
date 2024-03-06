@@ -9,7 +9,6 @@ import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { ThemeProvider } from "@mui/material/styles";
 import { useForm } from "react-hook-form";
@@ -19,6 +18,8 @@ import authServiceInstance from "../services/AuthService"; // Import your AuthSe
 import Visibility from "@mui/icons-material/Visibility"; // Import visibility icon
 import VisibilityOff from "@mui/icons-material/VisibilityOff"; // Import visibility off icon
 import { Dialog, DialogTitle, DialogContent } from "@mui/material"; // Import necessary components for pop-up box
+import loginpage from "../images/login-page.jpg";
+import PersonIcon from "@mui/icons-material/Person";
 
 function Copyright(props) {
   return (
@@ -88,8 +89,7 @@ function Login() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage:
-              "url(https://source.unsplash.com/random?wallpapers)",
+            backgroundImage: `url(${loginpage})`,
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
@@ -109,12 +109,9 @@ function Login() {
               alignItems: "center",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
+            <Avatar sx={{ m: 1, bgcolor: "#9c27b0" }}>
+              <PersonIcon />
             </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
             <Box
               component="form"
               noValidate
@@ -184,10 +181,6 @@ function Login() {
                     />
                   ),
                 }}
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
               />
               <Button
                 type="submit"

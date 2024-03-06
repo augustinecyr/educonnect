@@ -8,14 +8,12 @@ import MainFeaturedPost from "../components/MainFeaturedPost";
 import FeaturedPost from "../components/FeaturedPost";
 import Footer from "../components/Footer";
 import theme from "../themes/Theme";
+import "../index.css";
 
 const sections = [
-  { title: "Courses", url: "#" },
+  { title: "Courses", url: "/courses" },
   { title: "Analytics", url: "#" },
   { title: "Resources", url: "#" },
-  { title: "Feature 1", url: "#" },
-  { title: "Feature 2", url: "#" },
-  { title: "Feature 3", url: "#" },
   { title: "Profile", url: "#" },
 ];
 
@@ -50,11 +48,12 @@ export default function Home() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" >
         <Header title={""} sections={sections} />{" "}
+        <br></br>
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
-          <Grid container spacing={4}>
+          <Grid container spacing={4} sx={{ marginTop: 2 }}>
             {featuredPosts.map((post) => (
               <FeaturedPost key={post.title} post={post} />
             ))}
