@@ -1,6 +1,9 @@
 const mysql = require("mysql");
 const { format } = require("date-fns");
 const bcrypt = require("bcrypt");
+const { sign } = require("jsonwebtoken");
+const { verify } = require("jsonwebtoken");
+require("dotenv").config();
 
 // Create a MySQL connection pool
 const pool = mysql.createPool({
@@ -41,4 +44,30 @@ exports.loginUser = async (req, res) => {
       message: `Authenticated user with the email: ${email} has logged onto the system at ${formattedTimestamp}`,
     });
   });
+};
+
+exports.validateToken = (req, res, next) => {
+  const EduconnectUser = {
+    email,
+    password,
+  };
+  let accessToken = sign(EduconnectUser, process.env.APP_SECRET, {
+    expiresIn: process.env.TOKEN_EXPIRES_IN,
+  });
+  res.json({
+    accessToken: accessToken,
+    user: EduconnectUser,
+  });
+  try {
+    const accessToken = req.header("Authorization").split(" ")[1];
+    if (!accessToken) {
+      return res.sendStatus(401);
+    }
+
+    const payload = verify(accessToken, process.env.APP_SECRET);
+    req.user = payload;
+    return next();
+  } catch (err) {
+    return res.sendStatus(401);
+  }
 };

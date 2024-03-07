@@ -1,5 +1,4 @@
 const User = require("../models/User"); // Assuming you have a User model defined
-const bcrypt = require("bcrypt");
 const mysql = require("mysql");
 
 const pool = mysql.createPool({
@@ -33,16 +32,12 @@ exports.createUser = async (req, res) => {
     createdAt,
     updatedAt,
   };
-  
-  EduconnectUserData.password = await bcrypt.hash(EduconnectUserData.password, 10);
 
   const DbUserData = {
     email: EduconnectUserData.email,
     password: EduconnectUserData.password,
   };
 
-  DbUserData.password = await bcrypt.hash(DbUserData.password, 10);
-  
   // Check if the email already exists
   const checkEmailQuery = `SELECT COUNT(*) AS count FROM users WHERE email = ?`;
 
