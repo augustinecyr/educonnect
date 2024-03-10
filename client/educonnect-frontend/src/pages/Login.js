@@ -54,16 +54,16 @@ function Login() {
   const onSubmit = async (data) => {
     try {
       const { email, password } = data;
-      setSuccess(true);
-      setOpen(true);
       // Call the login method of AuthService
       await authServiceInstance.login(email, password);
+      setSuccess(true);
+      setOpen(true);
       await new Promise((resolve) => setTimeout(resolve, 2500));
       // If login successful, redirect to home page
       navigate("/home");
     } catch (error) {
       console.error("Login has failed:", error.message);
-      // Handle login error (e.g., display error message)
+      setOpen(true);
       setSuccess(false);
     }
   };
@@ -192,7 +192,7 @@ function Login() {
               </Button>
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link href="/resetpassword" variant="body2">
                     Forgot password?
                   </Link>
                 </Grid>

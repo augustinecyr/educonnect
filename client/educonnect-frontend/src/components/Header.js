@@ -91,6 +91,7 @@ function Header(props) {
                   onClose={handleMenuClose}
                 >
                   <MenuItem onClick={handleMenuClose}>My Account</MenuItem>
+                  <MenuItem onClick={handleMenuClose}>Courses</MenuItem>
                   <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
                   <MenuItem onClick={onLogout}>Logout</MenuItem>
                 </Menu>

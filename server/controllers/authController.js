@@ -18,6 +18,10 @@ const pool = mysql.createPool({
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
+  const EduconnectUser = {
+    email,
+    password,
+  };
   const query = "SELECT * FROM users WHERE email = ? AND password = ?";
   const params = [email, password];
 
@@ -34,30 +38,39 @@ exports.loginUser = async (req, res) => {
         .status(401)
         .json({ message: "Invalid user credentials provided." });
     }
-
     const timestamp = new Date();
     // format function
     const formattedTimestamp = format(timestamp, "dd:MM:yyyy HH:mm:ss");
     // Passwords match
-    res.status(200);
+    // Generate token for the authenticated user
+    const accessToken = sign(EduconnectUser, process.env.APP_SECRET, {
+      expiresIn: process.env.TOKEN_EXPIRES_IN,
+    });
+
     res.status(200).json({
       message: `Authenticated user with the email: ${email} has logged onto the system at ${formattedTimestamp}`,
+      token: accessToken, // Include the generated token in the response
     });
   });
 };
 
-exports.validateToken = (req, res, next) => {
+exports.generateToken = async (req, res) => {
+  const { email, password } = req.body;
+
   const EduconnectUser = {
     email,
     password,
   };
-  let accessToken = sign(EduconnectUser, process.env.APP_SECRET, {
+  const accessToken = sign(EduconnectUser, process.env.APP_SECRET, {
     expiresIn: process.env.TOKEN_EXPIRES_IN,
   });
   res.json({
     accessToken: accessToken,
     user: EduconnectUser,
   });
+};
+
+exports.validateToken = async (req, res, next) => {
   try {
     const accessToken = req.header("Authorization").split(" ")[1];
     if (!accessToken) {
@@ -66,7 +79,7 @@ exports.validateToken = (req, res, next) => {
 
     const payload = verify(accessToken, process.env.APP_SECRET);
     req.user = payload;
-    return next();
+    next();
   } catch (err) {
     return res.sendStatus(401);
   }

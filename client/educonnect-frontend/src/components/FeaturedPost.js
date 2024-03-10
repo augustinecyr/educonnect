@@ -30,7 +30,7 @@ function FeaturedPost(props) {
           </CardContent>
           <CardMedia
             component="img"
-            sx={{ width: 160, display: { xs: 'none', sm: 'block' } }}
+            sx={{ width: 200, display: { xs: 'none', sm: 'block' } }}
             image={post.image}
             alt={post.imageLabel}
           />
@@ -42,12 +42,12 @@ function FeaturedPost(props) {
 
 FeaturedPost.propTypes = {
   post: PropTypes.shape({
-    date: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    image: PropTypes.string.isRequired,
-    imageLabel: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-  }).isRequired,
+    date: PropTypes.string,
+    description: PropTypes.string,
+    image: PropTypes.string,
+    imageLabel: PropTypes.string,
+    title: PropTypes.string,
+  }),
 };
 
 export default FeaturedPost;

@@ -20,6 +20,7 @@ class AuthService {
    //   console.log("Login successful. Received data:", data);
       // Store authentication token in local storage
       localStorage.setItem("token", data.token);
+      console.log(data.token);
       return data;
     } catch (error) {
       console.error("An error occurred during login:", error);
@@ -35,6 +36,11 @@ class AuthService {
   isAuthenticated() {
     // Check if authentication token exists in local storage
     return localStorage.getItem("token") !== null;
+  }
+  
+  isAdmin(email) {
+    // Check if the user email is admin@educonnect.sg
+    return email === "admin@educonnect.sg";
   }
 }
 const authServiceInstance = new AuthService(); // Create an instance of AuthService

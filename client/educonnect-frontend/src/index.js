@@ -1,5 +1,5 @@
 import React from "react";
-import AppRouter from "../src/pages/Router";
+import AppRouter from "./services/Router";
 import { ThemeProvider } from "@mui/material";
 import theme from "./themes/Theme";
 import { createRoot } from "react-dom/client";
