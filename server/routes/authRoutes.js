@@ -2,16 +2,15 @@
 const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
-
-// Register a new user
-router.post("/register", authController.registerUser);
-
+const validateToken = require("../controllers/authController");
 // Login a user
 router.post("/login", authController.loginUser);
 
-// Logout a user (optional)
-router.post("/logout", authController.logoutUser);
+// Route to generate token
+router.post('/generate-token', authController.generateToken);
 
-// Add more routes as needed
-
+// Route that requires token validation
+router.get('/protected-route', authController.validateToken, (req, res) => {
+  res.json({ message: 'Access granted!' });
+});
 module.exports = router;
