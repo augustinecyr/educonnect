@@ -64,19 +64,15 @@ connection.connect((err) => {
 
 // Routes using separate files
 const authRoutes = require("./routes/authRoutes");
-const postRoutes = require("./routes/postRoutes");
 const userRoutes = require("./routes/userRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const enrollmentRoutes = require("./routes/enrollmentRoutes");
-const mainRoutes = require("./routes/mainRoutes");
 
 // Use route files
 app.use("/api/auth", authRoutes);
-app.use("/api/posts", postRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/enrollment", enrollmentRoutes);
-app.use("/home", mainRoutes);
 
 // Start the server
 app.listen(PORT, () => {
