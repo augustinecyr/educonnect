@@ -19,6 +19,7 @@ class AuthService {
       const data = await response.json();
    //   console.log("Login successful. Received data:", data);
       // Store authentication token in local storage
+      localStorage.setItem("email", email);
       localStorage.setItem("token", data.token);
       console.log(data.token);
       return data;
@@ -31,6 +32,7 @@ class AuthService {
   logout() {
     // Clear authentication token from local storage
     localStorage.removeItem("token");
+    localStorage.removeItem("email");
   }
 
   isAuthenticated() {
@@ -39,6 +41,7 @@ class AuthService {
   }
   
   isAdmin(email) {
+     email = localStorage.getItem("email");
     // Check if the user email is admin@educonnect.sg
     return email === "admin@educonnect.sg";
   }
