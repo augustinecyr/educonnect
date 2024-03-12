@@ -21,7 +21,7 @@ function AppRouter() {
         <Route path="/register" element={<RegisterUser />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
-        {/* Define other routes as needed */}
+        <Route path="/courses/manage" element={<Courses />} />
       </Routes>
     </Router>
   );

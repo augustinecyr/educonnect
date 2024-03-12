@@ -15,7 +15,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
-import authServiceInstance from "../services/AuthService"; // Import AuthService
+import authServiceInstance from "../services/AuthService"; 
 
 const sections = [
   { title: "Courses", url: "/courses" },
@@ -35,7 +35,6 @@ const semesterCourses = {
       enrolled: 1234, // Example number of students enrolled
       hours: 20, // Example total hours
     },
-    // Add more courses for T12024 semester as needed
   ],
   T22024: [
     {
@@ -46,7 +45,6 @@ const semesterCourses = {
       enrolled: 3456, // Example number of students enrolled
       hours: 25, // Example total hours
     },
-    // Add more courses for T22024 semester as needed
   ],
   T32024: [
     {
@@ -57,16 +55,14 @@ const semesterCourses = {
       enrolled: 6789, // Example number of students enrolled
       hours: 30, // Example total hours
     },
-    // Add more courses for T32024 semester as needed
   ],
 };
 
 export default function Home() {
   const isAuthenticated = authServiceInstance.isAuthenticated();
-  const [isAdmin, setIsAdmin] = React.useState(false); // Initialize isAdmin state
+  const [isAdmin, setIsAdmin] = React.useState(false);
 
   React.useEffect(() => {
-    // Update isAdmin state when component mounts or isAuthenticated changes
     setIsAdmin(authServiceInstance.isAdmin("admin@educonnect.sg"));
   }, [isAuthenticated]);
 
@@ -142,7 +138,6 @@ export default function Home() {
                         Students Enrolled: {course.enrolled}
                       </Typography>
                       <br />
-                      {/* Conditional rendering of button based on isAdmin */}
                       {isAdmin ? (
                         <Button variant="contained" color="secondary">
                           Manage
