@@ -15,7 +15,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
-import authServiceInstance from "../services/AuthService"; 
+import authServiceInstance from "../services/AuthService";
 
 const sections = [
   { title: "Courses", url: "/courses" },
@@ -61,9 +61,11 @@ const semesterCourses = {
 export default function Home() {
   const isAuthenticated = authServiceInstance.isAuthenticated();
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     setIsAdmin(authServiceInstance.isAdmin("admin@educonnect.sg"));
+    setLoading(false);
   }, [isAuthenticated]);
 
   const [semester, setSemester] = React.useState("T12024");
@@ -76,6 +78,10 @@ export default function Home() {
     setSemester(selectedSemester);
     setCurrentCourses(semesterCourses[selectedSemester]);
   };
+
+  if (loading) {
+    return;
+  }
 
   return (
     <ThemeProvider theme={theme}>
