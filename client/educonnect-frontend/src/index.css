@@ -1,13 +1,10 @@
 .logo-link img {
   transition: transform 0.3s ease;
-
 }
 
 .logo-link img:hover {
   transform: rotate(10deg) scale(1.1);
 }
-
-
 
 .section-link {
   text-decoration: none;
@@ -16,7 +13,7 @@
 }
 
 .section-link:hover {
-  color: #007bff; /* Change to your desired hover color */
+  color: #007bff;
   animation: bounce 1s;
 }
 
@@ -25,5 +22,9 @@
   border-radius: 10px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
   padding: 10px;
-  max-width: 300px; /* Adjust the maximum width as needed */
+  max-width: 300px;
+}
+
+.featured-post-card {
+  height: 300px;
 }

@@ -13,8 +13,6 @@ import ai from "../images/ai.jpg";
 import onlinelearning from "../images/online-learning.jpg";
 import authServiceInstance from "../services/AuthService";
 import remotework from "../images/remote-work.jpg";
-import vr from "../images/vr.jpg";
-import machinelearning from "../images/machine-learning.jpg";
 import technologyineducation from "../images/technology-in-education.jpg";
 
 const sections = [
@@ -78,39 +76,7 @@ const featuredPosts = [
     imageLabel: "Remote Work",
   },
   {
-    title: "Advancements in Virtual Reality Technology",
-    date: "March 9, 2024",
-    description:
-      "Delve into the latest developments in virtual reality technology and its applications across various industries.",
-    article: `Virtual reality (VR) technology has rapidly evolved from a niche gaming accessory to a transformative tool with applications across various industries. From immersive training simulations to virtual tours and remote collaboration, the potential of VR technology to revolutionize how we interact with digital content is boundless.
-
-    One of the most significant advancements in VR technology is its application in education and training. VR simulations offer hands-on learning experiences that are not possible in traditional classrooms, allowing students to explore complex concepts in a safe and interactive environment.
-    
-    Additionally, VR technology is revolutionizing the fields of healthcare, architecture, and entertainment by enabling immersive experiences that blur the lines between physical and digital worlds. From medical training simulations to virtual design prototyping, VR is pushing the boundaries of what's possible and transforming how we work, learn, and play.
-    
-    As VR technology continues to mature and become more accessible, the opportunities for innovation and creativity are endless. By harnessing the power of VR, we can create new realities and unlock possibilities that were once confined to the realm of science fiction.
-    `,
-    image: vr,
-    imageLabel: "Virtual Reality",
-  },
-  {
-    title: "The Rise of Machine Learning in Healthcare",
-    date: "March 6, 2024",
-    description:
-      "Learn how machine learning is revolutionizing healthcare with personalized treatment plans and predictive analytics.",
-    article: `Machine learning (ML) is revolutionizing the healthcare industry by enabling personalized treatment plans, predictive analytics, and improved patient outcomes. From diagnosing diseases to optimizing hospital operations, the applications of ML in healthcare are vast and transformative.
-
-    One of the most significant benefits of ML in healthcare is its ability to analyze large datasets and identify patterns that human clinicians may overlook. By leveraging ML algorithms, healthcare providers can make more accurate diagnoses, detect early signs of disease, and tailor treatment plans to individual patient needs.
-    
-    Moreover, ML-powered predictive analytics are revolutionizing preventive care by identifying high-risk patients and recommending proactive interventions to prevent adverse health outcomes. From predicting hospital readmissions to identifying outbreaks of infectious diseases, ML algorithms are helping healthcare organizations anticipate and mitigate risks more effectively.
-    
-    However, the adoption of ML in healthcare also presents challenges such as data privacy concerns, algorithm bias, and the need for robust regulatory frameworks. As we navigate the complex ethical and regulatory landscape of ML in healthcare, it's essential to prioritize patient safety and ensure that these technologies are deployed responsibly and ethically.
-    `,
-    image: machinelearning,
-    imageLabel: "Machine Learning in Healthcare",
-  },
-  {
-    title: "The Role of Technology in Modern Education",
+    title: "Technology in Education",
     date: "March 11, 2024",
     description:
       "Explore how technology is transforming the landscape of education, from interactive learning platforms to virtual classrooms, and its impact on student engagement and outcomes.",
@@ -134,7 +100,6 @@ const featuredPosts = [
 
 export default function Home() {
   const isAdmin = authServiceInstance.isAdmin("admin@educonnect.sg");
-
   const isAuthenticated = authServiceInstance.isAuthenticated();
   console.log("User has a valid token:", isAuthenticated);
   console.log("User is an Admin", isAdmin);
@@ -142,10 +107,11 @@ export default function Home() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container maxWidth="lg">
-        <Header title={""} sections={sections} /> <br></br>
+        <Header title={""} sections={sections} />
+        <br/>
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />
-          <Grid container spacing={4} sx={{ marginTop: 2 }}>
+          <Grid container spacing={4}>
             {featuredPosts.map((post) => (
               <FeaturedPost key={post.title} post={post} />
             ))}
@@ -153,6 +119,7 @@ export default function Home() {
           <Grid container spacing={5} sx={{ mt: 3 }}></Grid>
         </main>
       </Container>
+      <br/><br/>
       <Footer />
     </ThemeProvider>
   );

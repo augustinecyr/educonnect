@@ -29,7 +29,7 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material"; // Import necessary components for pop-up box
-
+import loginpage from "../images/login-page.jpg";
 function Copyright(props) {
   return (
     <Typography
@@ -121,8 +121,7 @@ function RegisterUser() {
           sm={4}
           md={7}
           sx={{
-            backgroundImage:
-              "url(https://source.unsplash.com/random?wallpapers)",
+            backgroundImage: `url(${loginpage})`,
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
