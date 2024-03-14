@@ -12,7 +12,7 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
-  IconButton,
+  IconButton,Snackbar
 } from "@mui/material";
 import { Delete as DeleteIcon, Edit as EditIcon } from "@mui/icons-material";
 import axios from "axios";
@@ -34,12 +34,15 @@ const ManageCourses = () => {
   const [videoUrl, setVideoUrl] = useState("");
   const [attachmentUrl, setAttachmentUrl] = useState("");
   const [courses, setCourses] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
   console.log("User has a valid token:", isAuthenticated);
   console.log("User is an Admin", isAdmin);
 
   useEffect(() => {
     setIsAdmin(authServiceInstance.isAdmin("admin@educonnect.sg"));
-    fetchCoursesData(); // Fetch courses when component mounts
+    fetchCoursesData();
   }, [isAuthenticated]);
 
   const fetchCoursesData = async () => {
@@ -47,41 +50,13 @@ const ManageCourses = () => {
       const coursesData = await courseServiceInstance.fetchCourses(); // Call the method from the instance
       setCourses(coursesData);
     } catch (error) {
+      setErrorMessage("Failed to retrieve data.");
+
       console.error("Error fetching courses:", error);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:3001/api/courses/create",
-        {
-          semester,
-          title,
-          description,
-          videoUrl,
-          attachmentUrl,
-        }
-      );
-      console.log("Response:", response.data);
-      // Clear the form after successful submission
-      setSemester("");
-      setTitle("");
-      setDescription("");
-      setVideoUrl("");
-      setAttachmentUrl("");
-      // Refresh the course list
-      courseServiceInstance.fetchCourses();
-      // You can also show a success message or redirect the user
-    } catch (error) {
-      console.error("Error:", error);
-      // Handle error (show error message, etc.)
-    }
-  };
-
   const handleEdit = (course) => {
-    // Populate form fields with course details for editing
     setSemester(course.semester);
     setTitle(course.title);
     setDescription(course.description);
@@ -104,14 +79,17 @@ const ManageCourses = () => {
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setSuccessMessage("");
+    setErrorMessage("");
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container maxWidth="lg">
         <Header title={""} sections={sections}>
-         
         </Header>
-
         <br />
         <main style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -120,7 +98,6 @@ const ManageCourses = () => {
               Create Course
             </Button>
           </div>
-          <form onSubmit={handleSubmit}>{/* Form fields here */}</form>
           <List>
             {courses.map((course) => (
               <ListItem key={course.courseId} divider>
@@ -148,6 +125,18 @@ const ManageCourses = () => {
             ))}
           </List>
         </main>
+        <Snackbar
+          open={!!successMessage || !!errorMessage}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          message={successMessage || errorMessage}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }} // Snackbar appears at the top right corner
+          ContentProps={{
+            sx: {
+              backgroundColor: successMessage ? "#4caf50" : "#f44336", // Change background color based on success or error message
+            },
+          }}
+        />
       </Container>
       <Footer />
     </ThemeProvider>

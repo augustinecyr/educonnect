@@ -6,6 +6,7 @@ import {
   Button,
   Menu,
   MenuItem,
+  Snackbar,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import logo from "../images/educonnect.jpg";
@@ -15,6 +16,12 @@ import authServiceInstance from "../services/AuthService";
 function Header({ sections, title }) {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const handleCloseSnackbar = () => {
+    setSuccessMessage("");
+    setErrorMessage("");
+  };
 
   const handleProfileClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -27,8 +34,11 @@ function Header({ sections, title }) {
   const onLogout = async () => {
     try {
       authServiceInstance.logout();
+      setSuccessMessage("Logout successfully!");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       navigate("/login");
     } catch (error) {
+      setErrorMessage("Failed to logout!");
       console.error("Logout has failed:", error.message);
     }
   };
@@ -91,7 +101,7 @@ function Header({ sections, title }) {
                 variant="body2"
                 href={section.url}
                 className="section-link"
-                sx={{ p: 1, flexShrink: 0 ,textDecoration: "none"}}
+                sx={{ p: 1, flexShrink: 0, textDecoration: "none" }}
               >
                 {section.title}
               </Link>
@@ -99,6 +109,18 @@ function Header({ sections, title }) {
           </React.Fragment>
         ))}
       </div>
+      <Snackbar
+        open={!!successMessage || !!errorMessage}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={successMessage || errorMessage}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }} // Snackbar appears at the top right corner
+        ContentProps={{
+          sx: {
+            backgroundColor: successMessage ? "#4caf50" : "#f44336", // Change background color based on success or error message
+          },
+        }}
+      />
     </Toolbar>
   );
 }

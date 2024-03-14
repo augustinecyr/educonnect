@@ -44,7 +44,7 @@ const CreateCourse = () => {
         videoUrl,
         attachmentUrl,
       });
-      setSuccessMessage("Course created successfully!");
+      setSuccessMessage("Course was created successfully!");
       // Clear the form after successful submission
       setCourseId(""); // Clear courseId as well
       setSemester("");
@@ -54,7 +54,7 @@ const CreateCourse = () => {
       setAttachmentUrl("");
       // You can also show a success message or redirect the user
     } catch (error) {
-      setSuccessMessage("Course created successfully!");
+      setErrorMessage("Failed to create course!");
       console.error("Error:", error);
       // Handle error (show error message, etc.)
     }
@@ -146,12 +146,14 @@ const CreateCourse = () => {
           autoHideDuration={6000}
           onClose={handleCloseSnackbar}
           message={successMessage || errorMessage}
+          anchorOrigin={{ vertical: "top", horizontal: "right" }} // Snackbar appears at the top right corner
           ContentProps={{
             sx: {
-              backgroundColor: successMessage ? "#4caf50" : "#f44336",
+              backgroundColor: successMessage ? "#4caf50" : "#f44336", // Change background color based on success or error message
             },
           }}
-        />      </Container>
+        />
+      </Container>
       <Footer />
     </ThemeProvider>
   );
