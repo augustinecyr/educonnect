@@ -9,14 +9,23 @@ import {
   CssBaseline,
   Button,
   List,
-  ListItem,
   ListItemText,
   ListItemSecondaryAction,
-  IconButton,Snackbar
+  IconButton,
+  Snackbar,
+  TextField,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography,
 } from "@mui/material";
 import { Delete as DeleteIcon, Edit as EditIcon } from "@mui/icons-material";
-import axios from "axios";
 import courseServiceInstance from "../services/CourseService";
+import { useLocation } from "react-router-dom";
 
 const sections = [
   { title: "Courses", url: "/courses" },
@@ -36,6 +45,10 @@ const ManageCourses = () => {
   const [courses, setCourses] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const location = useLocation();
+  const selectedCourse = location.state?.course;
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+  const [courseToDelete, setCourseToDelete] = useState(null);
 
   console.log("User has a valid token:", isAuthenticated);
   console.log("User is an Admin", isAdmin);
@@ -45,9 +58,18 @@ const ManageCourses = () => {
     fetchCoursesData();
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    if (selectedCourse) {
+      setSemester(selectedCourse.semester);
+      setTitle(selectedCourse.title);
+      setDescription(selectedCourse.description);
+      setVideoUrl(selectedCourse.videoUrl);
+      setAttachmentUrl(selectedCourse.attachmentUrl);
+    }
+  }, [selectedCourse]);
   const fetchCoursesData = async () => {
     try {
-      const coursesData = await courseServiceInstance.fetchCourses(); // Call the method from the instance
+      const coursesData = await courseServiceInstance.fetchCourses(); 
       setCourses(coursesData);
     } catch (error) {
       setErrorMessage("Failed to retrieve data.");
@@ -64,18 +86,38 @@ const ManageCourses = () => {
     setAttachmentUrl(course.attachmentUrl);
   };
 
-  const handleDelete = async (courseId) => {
+  const handleUpdate = async (courseId) => {
     try {
-      // Make a DELETE request to your backend API to delete the course
-      const response = await axios.delete(
-        `YOUR_BACKEND_API_URL_HERE/${courseId}`
-      );
-      console.log("Response:", response.data);
-      // Refresh the course list
-      courseServiceInstance.fetchCourses();
+      const courseData = {
+        semester,
+        title,
+        description,
+        videoUrl,
+        attachmentUrl,
+      };
+      await courseServiceInstance.editCourse(courseId, courseData);
+      setSuccessMessage("Course updated successfully");
+      fetchCoursesData(); 
     } catch (error) {
+      setErrorMessage("Failed to update course.");
+      console.error("Error updating course:", error);
+    }
+  };
+  const handleDelete = (courseId) => {
+    setCourseToDelete(courseId);
+    setDeleteConfirmationOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await courseServiceInstance.deleteCourse(courseToDelete);
+      setSuccessMessage("Course deleted successfully");
+      fetchCoursesData(); 
+    } catch (error) {
+      setErrorMessage("Failed to delete course.");
       console.error("Error deleting course:", error);
-      // Handle error (show error message, etc.)
+    } finally {
+      setDeleteConfirmationOpen(false);
     }
   };
 
@@ -88,59 +130,132 @@ const ManageCourses = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container maxWidth="lg">
-        <Header title={""} sections={sections}>
-        </Header>
+        <Header title={""} sections={sections}></Header>
         <br />
         <main style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h2>Courses</h2>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <h2>Course Management</h2>
             <Button color="primary" variant="contained" href="/courses/create">
               Create Course
             </Button>
           </div>
           <List>
             {courses.map((course) => (
-              <ListItem key={course.courseId} divider>
-                <ListItemText
-                  primary={course.title}
-                  secondary={`ID: ${course.courseId} | Semester: ${course.semester}`}
-                />
-                <ListItemSecondaryAction>
-                  <IconButton
-                    edge="end"
-                    aria-label="edit"
-                    onClick={() => handleEdit(course)}
+              <Accordion key={course.courseId} style={{ marginBottom: "8px" }}>
+                <AccordionSummary
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <ListItemText
+                    primary={course.title}
+                    secondary={`ID: ${course.courseId} | Semester: ${course.semester}`}
+                  />
+                  <ListItemSecondaryAction>
+                    <IconButton
+                      edge="end"
+                      aria-label="edit"
+                      onClick={() => handleEdit(course)}
+                    >
+                    <EditIcon style={{ color: "#2196f3" }} />
+                    </IconButton>
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => handleDelete(course.courseId)}
+                    >
+                    <DeleteIcon style={{ color: "#f44336" }} />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "100%",
+                    }}
                   >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={() => handleDelete(course.courseId)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
+                    <TextField
+                      label="Semester"
+                      value={semester}
+                      onChange={(e) => setSemester(e.target.value)}
+                    />
+                    <TextField
+                      label="Title"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
+                    <TextField
+                      label="Description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                    <TextField
+                      label="Video URL"
+                      value={videoUrl}
+                      onChange={(e) => setVideoUrl(e.target.value)}
+                    />
+                    <TextField
+                      label="Attachment URL"
+                      value={attachmentUrl}
+                      onChange={(e) => setAttachmentUrl(e.target.value)}
+                    />
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      onClick={() => handleUpdate(course.courseId)}
+                      style={{ marginTop: "8px" }}
+                    >
+                      Update
+                    </Button>
+                  </div>
+                </AccordionDetails>
+              </Accordion>
             ))}
           </List>
+          <br></br>
+          <br></br>
         </main>
         <Snackbar
           open={!!successMessage || !!errorMessage}
           autoHideDuration={6000}
           onClose={handleCloseSnackbar}
           message={successMessage || errorMessage}
-          anchorOrigin={{ vertical: "top", horizontal: "right" }} // Snackbar appears at the top right corner
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
           ContentProps={{
             sx: {
-              backgroundColor: successMessage ? "#4caf50" : "#f44336", // Change background color based on success or error message
+              backgroundColor: successMessage ? "#4caf50" : "#f44336",
             },
           }}
         />
+        <Dialog
+          open={deleteConfirmationOpen}
+          onClose={() => setDeleteConfirmationOpen(false)}
+        >
+          <DialogTitle>WARNING</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1">
+              Are you sure you want to delete this course?
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeleteConfirmationOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={confirmDelete} color="secondary">
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Container>
       <Footer />
     </ThemeProvider>
   );
 };
-
 export default ManageCourses;

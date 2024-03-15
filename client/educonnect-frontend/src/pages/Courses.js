@@ -69,9 +69,14 @@ export default function Home() {
     return null;
   }
 
-  const handleManageClick = () => {
-    navigate("/courses/manage");
+   /* const handleManageClick = (course) => {
+    navigate(`/courses/manage`, { state: { course } });
+  }; */
+
+  const handleManageClick = (course) => {
+    navigate(`/courses/edit/${course.courseId}`, { state: { course } });
   };
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -120,12 +125,12 @@ export default function Home() {
                         <br />
                         {isAdmin ? (
                           <Button
-                            variant="contained"
-                            color="secondary"
-                            onClick={handleManageClick}
-                          >
-                            Manage
-                          </Button>
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => handleManageClick(course)}
+                        >
+                          Manage
+                        </Button>                        
                         ) : (
                           <Button variant="contained" color="primary">
                             Enroll Now

@@ -25,8 +25,8 @@ function AppRouter() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/courses/manage" element={<ManageCourses />} />
         <Route path="/courses/create" element={<CreateCourse />} />
-        <Route path="/courses/edit" element={<ManageCourses />} />
-        <Route path="/courses/delete" element={<ManageCourses />} />
+        <Route path="/courses/edit/:courseId" element={<ManageCourses />} />
+        <Route path="/courses/delete/:courseId" element={<ManageCourses />} />
       </Routes>
     </Router>
   );
