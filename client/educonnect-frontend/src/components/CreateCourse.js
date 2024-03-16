@@ -24,8 +24,8 @@ const CreateCourse = () => {
   const [semester, setSemester] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
-  const [attachmentUrl, setAttachmentUrl] = useState("");
+  //const [videoUrl, setVideoUrl] = useState("");
+ // const [attachmentUrl, setAttachmentUrl] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -41,8 +41,8 @@ const CreateCourse = () => {
         semester,
         title,
         description,
-        videoUrl,
-        attachmentUrl,
+      //  videoUrl,
+       // attachmentUrl,
       });
       setSuccessMessage("Course was created successfully!");
       // Clear the form after successful submission
@@ -50,8 +50,8 @@ const CreateCourse = () => {
       setSemester("");
       setTitle("");
       setDescription("");
-      setVideoUrl("");
-      setAttachmentUrl("");
+   //   setVideoUrl("");
+   //   setAttachmentUrl("");
       // You can also show a success message or redirect the user
     } catch (error) {
       setErrorMessage("Failed to create course!");
@@ -119,22 +119,7 @@ const CreateCourse = () => {
               rows={4}
               margin="normal"
             />
-            <TextField
-              fullWidth
-              variant="outlined"
-              label="Video URL"
-              value={videoUrl}
-              onChange={(e) => setVideoUrl(e.target.value)}
-              margin="normal"
-            />
-            <TextField
-              fullWidth
-              variant="outlined"
-              label="Attachment URL"
-              value={attachmentUrl}
-              onChange={(e) => setAttachmentUrl(e.target.value)}
-              margin="normal"
-            />
+           
             <br></br>
             <br></br>
             <Button
