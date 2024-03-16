@@ -24,11 +24,11 @@ const Course = sequelize.define("educonnect_courses", {
   },
   videoUrl: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   attachmentUrl: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   createdAt: {
     type: DataTypes.DATE,

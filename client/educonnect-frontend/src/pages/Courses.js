@@ -69,10 +69,6 @@ export default function Home() {
     return null;
   }
 
-   /* const handleManageClick = (course) => {
-    navigate(`/courses/manage`, { state: { course } });
-  }; */
-
   const handleManageClick = (course) => {
     navigate(`/courses/edit/${course.courseId}`, { state: { course } });
   };

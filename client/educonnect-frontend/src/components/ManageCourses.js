@@ -40,7 +40,7 @@ const ManageCourses = () => {
   const [semester, setSemester] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
+  const [videoUrls, setVideoUrls] = useState("");
   const [attachmentUrl, setAttachmentUrl] = useState("");
   const [courses, setCourses] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
@@ -63,13 +63,14 @@ const ManageCourses = () => {
       setSemester(selectedCourse.semester);
       setTitle(selectedCourse.title);
       setDescription(selectedCourse.description);
-      setVideoUrl(selectedCourse.videoUrl);
+      setVideoUrls(selectedCourse.videoUrl);
       setAttachmentUrl(selectedCourse.attachmentUrl);
     }
   }, [selectedCourse]);
+
   const fetchCoursesData = async () => {
     try {
-      const coursesData = await courseServiceInstance.fetchCourses(); 
+      const coursesData = await courseServiceInstance.fetchCourses();
       setCourses(coursesData);
     } catch (error) {
       setErrorMessage("Failed to retrieve data.");
@@ -82,7 +83,7 @@ const ManageCourses = () => {
     setSemester(course.semester);
     setTitle(course.title);
     setDescription(course.description);
-    setVideoUrl(course.videoUrl);
+    setVideoUrls(course.videoUrl);
     setAttachmentUrl(course.attachmentUrl);
   };
 
@@ -92,17 +93,18 @@ const ManageCourses = () => {
         semester,
         title,
         description,
-        videoUrl,
+        videoUrls,
         attachmentUrl,
       };
       await courseServiceInstance.editCourse(courseId, courseData);
       setSuccessMessage("Course updated successfully");
-      fetchCoursesData(); 
+      fetchCoursesData();
     } catch (error) {
       setErrorMessage("Failed to update course.");
       console.error("Error updating course:", error);
     }
   };
+
   const handleDelete = (courseId) => {
     setCourseToDelete(courseId);
     setDeleteConfirmationOpen(true);
@@ -112,7 +114,7 @@ const ManageCourses = () => {
     try {
       await courseServiceInstance.deleteCourse(courseToDelete);
       setSuccessMessage("Course deleted successfully");
-      fetchCoursesData(); 
+      fetchCoursesData();
     } catch (error) {
       setErrorMessage("Failed to delete course.");
       console.error("Error deleting course:", error);
@@ -124,6 +126,10 @@ const ManageCourses = () => {
   const handleCloseSnackbar = () => {
     setSuccessMessage("");
     setErrorMessage("");
+  };
+
+  const handleAddVideoUrl = () => {
+    setVideoUrls((prevUrls) => (prevUrls ? `${prevUrls},` : ""));
   };
 
   return (
@@ -162,14 +168,14 @@ const ManageCourses = () => {
                       aria-label="edit"
                       onClick={() => handleEdit(course)}
                     >
-                    <EditIcon style={{ color: "#2196f3" }} />
+                      <EditIcon style={{ color: "#2196f3" }} />
                     </IconButton>
                     <IconButton
                       edge="end"
                       aria-label="delete"
                       onClick={() => handleDelete(course.courseId)}
                     >
-                    <DeleteIcon style={{ color: "#f44336" }} />
+                      <DeleteIcon style={{ color: "#f44336" }} />
                     </IconButton>
                   </ListItemSecondaryAction>
                 </AccordionSummary>
@@ -179,6 +185,7 @@ const ManageCourses = () => {
                       display: "flex",
                       flexDirection: "column",
                       width: "100%",
+                      gap: "16px",
                     }}
                   >
                     <TextField
@@ -199,11 +206,27 @@ const ManageCourses = () => {
                       onChange={(e) => setDescription(e.target.value)}
                       required
                     />
-                    <TextField
-                      label="Video URL"
-                      value={videoUrl}
-                      onChange={(e) => setVideoUrl(e.target.value)}
-                    />
+                    {videoUrls.split(",").map((url, index) => (
+                      <TextField
+                        key={index}
+                        label={`Video URL ${index + 1}`}
+                        value={url}
+                        onChange={(e) => {
+                          const updatedUrls = videoUrls.split(",");
+                          updatedUrls[index] = e.target.value;
+                          setVideoUrls(updatedUrls.join(","));
+                        }}
+                        placeholder={url || "Enter Video URL"}
+                      />
+                    ))}
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      onClick={handleAddVideoUrl}
+                      style={{ marginTop: "8px" }}
+                    >
+                      Add Video URL
+                    </Button>
                     <TextField
                       label="Attachment URL"
                       value={attachmentUrl}
@@ -262,4 +285,5 @@ const ManageCourses = () => {
     </ThemeProvider>
   );
 };
+
 export default ManageCourses;

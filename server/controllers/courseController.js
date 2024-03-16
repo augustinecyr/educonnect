@@ -45,7 +45,7 @@ exports.getAllCourses = async (req, res) => {
 exports.editCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
-    const { semester, title, description, videoUrl, attachmentUrl } = req.body;
+    const { semester, title, description, videoUrls, attachmentUrl } = req.body;
 
     const course = await Course.findOne({ where: { courseId } });
 
@@ -56,7 +56,7 @@ exports.editCourse = async (req, res) => {
     course.semester = semester;
     course.title = title;
     course.description = description;
-    course.videoUrl = videoUrl;
+    course.videoUrl = videoUrls;
     course.attachmentUrl = attachmentUrl;
 
     await course.save();
