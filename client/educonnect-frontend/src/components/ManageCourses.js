@@ -185,16 +185,19 @@ const ManageCourses = () => {
                       label="Semester"
                       value={semester}
                       onChange={(e) => setSemester(e.target.value)}
+                      required
                     />
                     <TextField
                       label="Title"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
+                      required
                     />
                     <TextField
                       label="Description"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
+                      required
                     />
                     <TextField
                       label="Video URL"
@@ -211,6 +214,7 @@ const ManageCourses = () => {
                       variant="contained"
                       onClick={() => handleUpdate(course.courseId)}
                       style={{ marginTop: "8px" }}
+                      disabled={!semester || !title || !description}
                     >
                       Update
                     </Button>

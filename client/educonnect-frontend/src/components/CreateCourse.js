@@ -88,6 +88,7 @@ const CreateCourse = () => {
               value={courseId}
               onChange={(e) => setCourseId(e.target.value)}
               margin="normal"
+              required
             />
             <TextField
               fullWidth
@@ -136,7 +137,12 @@ const CreateCourse = () => {
             />
             <br></br>
             <br></br>
-            <Button type="submit" variant="contained" color="primary">
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={!courseId || !semester || !title || !description}
+            >
               Create Course
             </Button>
           </form>
