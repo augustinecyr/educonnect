@@ -22,10 +22,11 @@ import {
   DialogContent,
   DialogActions,
   Typography,
+  MenuItem,
 } from "@mui/material";
 import { Delete as DeleteIcon, Edit as EditIcon } from "@mui/icons-material";
 import courseServiceInstance from "../services/CourseService";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 
 const sections = [
   { title: "Courses", url: "/courses" },
@@ -49,6 +50,9 @@ const ManageCourses = () => {
   const selectedCourse = location.state?.course;
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [courseToDelete, setCourseToDelete] = useState(null);
+  const [semesterFilter, setSemesterFilter] = useState("");
+  const semesters = [...new Set(courses.map((course) => course.semester))];
+  const [filteredCourses, setFilteredCourses] = useState([]);
 
   console.log("User has a valid token:", isAuthenticated);
   console.log("User is an Admin", isAdmin);
@@ -68,13 +72,20 @@ const ManageCourses = () => {
     }
   }, [selectedCourse]);
 
+  useEffect(() => {
+    setFilteredCourses(
+      semesterFilter
+        ? courses.filter((course) => course.semester === semesterFilter)
+        : courses
+    );
+  }, [semesterFilter, courses]);
+
   const fetchCoursesData = async () => {
     try {
       const coursesData = await courseServiceInstance.fetchCourses();
       setCourses(coursesData);
     } catch (error) {
       setErrorMessage("Failed to retrieve data.");
-
       console.error("Error fetching courses:", error);
     }
   };
@@ -122,10 +133,13 @@ const ManageCourses = () => {
       setDeleteConfirmationOpen(false);
     }
   };
-
   const handleCloseSnackbar = () => {
-    setSuccessMessage("");
-    setErrorMessage("");
+    if (successMessage) {
+      setSuccessMessage("");
+    }
+    if (errorMessage) {
+      setErrorMessage("");
+    }
   };
 
   const handleAddVideoUrl = () => {
@@ -147,12 +161,30 @@ const ManageCourses = () => {
             }}
           >
             <h2>Course Management</h2>
-            <Button color="primary" variant="contained" href="/courses/create">
-              Create Course
-            </Button>
+            <Link to="/courses/create" style={{ textDecoration: "none" }}>
+              <Button color="primary" variant="contained">
+                Create Course
+              </Button>
+            </Link>
           </div>
+          {/* Filter Dropdown */}
+          <TextField
+            select
+            label="Filter by Semester"
+            value={semesterFilter}
+            onChange={(e) => setSemesterFilter(e.target.value)}
+            variant="outlined"
+            style={{ marginBottom: "16px" }}
+          >
+            <MenuItem value="">All Semesters</MenuItem>
+            {semesters.map((semester, index) => (
+              <MenuItem key={index} value={semester}>
+                {semester}
+              </MenuItem>
+            ))}
+          </TextField>
           <List>
-            {courses.map((course) => (
+            {filteredCourses.map((course) => (
               <Accordion key={course.courseId} style={{ marginBottom: "8px" }}>
                 <AccordionSummary
                   aria-controls="panel1a-content"
@@ -163,13 +195,18 @@ const ManageCourses = () => {
                     secondary={`ID: ${course.courseId} | Semester: ${course.semester}`}
                   />
                   <ListItemSecondaryAction>
-                    <IconButton
-                      edge="end"
-                      aria-label="edit"
-                      onClick={() => handleEdit(course)}
+                    <Link
+                      to={`/courses/edit/${course.courseId}`}
+                      style={{ textDecoration: "none" }}
                     >
-                      <EditIcon style={{ color: "#2196f3" }} />
-                    </IconButton>
+                      <IconButton
+                        edge="end"
+                        aria-label="edit"
+                        onClick={() => handleEdit(course)}
+                      >
+                        <EditIcon style={{ color: "#2196f3" }} />
+                      </IconButton>
+                    </Link>
                     <IconButton
                       edge="end"
                       aria-label="delete"
@@ -227,11 +264,42 @@ const ManageCourses = () => {
                     >
                       Add Video URL
                     </Button>
-                    <TextField
-                      label="Attachment URL"
-                      value={attachmentUrl}
-                      onChange={(e) => setAttachmentUrl(e.target.value)}
+                    <label htmlFor="attachment-upload">
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        component="span"
+                        style={{ marginTop: "8px" }}
+                      >
+                        Upload Attachment
+                      </Button>
+                    </label>
+                    <input
+                      accept="*"
+                      style={{ display: "none" }}
+                      id="attachment-upload"
+                      type="file"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          setAttachmentUrl(file);
+                          document.getElementById(
+                            "attachment-label"
+                          ).textContent = file.name;
+                        } else {
+                          setAttachmentUrl(null);
+                          document.getElementById(
+                            "attachment-label"
+                          ).textContent = "No file selected";
+                        }
+                      }}
                     />
+                    <span
+                      id="attachment-label"
+                      style={{ marginLeft: "8px", fontSize: "14px" }}
+                    >
+                      {attachmentUrl ? attachmentUrl.name : "No file selected"}
+                    </span>
                     <Button
                       color="primary"
                       variant="contained"
@@ -251,7 +319,7 @@ const ManageCourses = () => {
         </main>
         <Snackbar
           open={!!successMessage || !!errorMessage}
-          autoHideDuration={6000}
+          autoHideDuration={1500}
           onClose={handleCloseSnackbar}
           message={successMessage || errorMessage}
           anchorOrigin={{ vertical: "top", horizontal: "right" }}

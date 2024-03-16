@@ -70,9 +70,8 @@ export default function Home() {
   }
 
   const handleManageClick = (course) => {
-    navigate(`/courses/edit/${course.courseId}`, { state: { course } });
-  };
-  
+    navigate(`/courses/manage`, { state: { course } });
+  };  
 
   return (
     <ThemeProvider theme={theme}>

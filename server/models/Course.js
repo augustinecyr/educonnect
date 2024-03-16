@@ -27,7 +27,7 @@ const Course = sequelize.define("educonnect_courses", {
     allowNull: true,
   },
   attachmentUrl: {
-    type: DataTypes.STRING,
+    type: DataTypes.BLOB,
     allowNull: true,
   },
   createdAt: {
