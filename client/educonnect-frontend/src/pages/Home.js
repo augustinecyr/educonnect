@@ -106,8 +106,9 @@ export default function Home() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container maxWidth="lg">
         <Header title={""} sections={sections} />
+        <Container maxWidth="lg">
+
         <br/>
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />

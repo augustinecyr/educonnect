@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../index");
 
-// Define the user model
 const Course = sequelize.define("educonnect_courses", {
   courseId: {
     type: DataTypes.STRING,

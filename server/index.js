@@ -1,9 +1,7 @@
-// this file is the main interface
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const mysql = require("mysql");
-// .env file config
 require("dotenv").config();
 const PORT = process.env.PORT;
 const { Sequelize } = require("sequelize");
@@ -18,7 +16,6 @@ app.use(
   })
 );
 
-// Create a Sequelize instance and establish connection to your MySQL database
 const sequelize = new Sequelize({
   dialect: "mysql",
   host: process.env.DB_HOST,
@@ -28,7 +25,6 @@ const sequelize = new Sequelize({
   database: process.env.DB_DATABASE,
 });
 
-// Test the database connection
 async function testConnection() {
   try {
     await sequelize.authenticate();
@@ -40,12 +36,10 @@ async function testConnection() {
   }
 }
 
-// Export the initialized Sequelize instance
 module.exports = { sequelize, testConnection };
 
-testConnection(); // run the function
+testConnection();
 
-// MySQL connection
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -62,19 +56,14 @@ connection.connect((err) => {
   console.log("Connected to MySQL: [educonnect]");
 });
 
-// Routes using separate files
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const courseRoutes = require("./routes/courseRoutes");
-const enrollmentRoutes = require("./routes/enrollmentRoutes");
 
-// Use route files
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/courses", courseRoutes);
-app.use("/api/enrollment", enrollmentRoutes);
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`Backend server is running on port ${PORT}`);
 });

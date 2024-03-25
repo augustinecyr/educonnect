@@ -67,8 +67,9 @@ const CreateCourse = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container maxWidth="lg">
         <Header title={""} sections={sections} />
+        <Container maxWidth="lg">
+
         <br />
         <main>
           <Link to="/courses/manage">

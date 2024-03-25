@@ -1,4 +1,4 @@
-const User = require("../models/User"); // Assuming you have a User model defined
+const User = require("../models/User");
 const mysql = require("mysql");
 
 const pool = mysql.createPool({
@@ -9,7 +9,6 @@ const pool = mysql.createPool({
   port: process.env.DB_PORT,
 });
 
-// Controller function to create a new user
 exports.createUser = async (req, res) => {
   const {
     name,
@@ -38,7 +37,6 @@ exports.createUser = async (req, res) => {
     password: EduconnectUserData.password,
   };
 
-  // Check if the email already exists
   const checkEmailQuery = `SELECT COUNT(*) AS count FROM users WHERE email = ?`;
 
   pool.query(checkEmailQuery, [DbUserData.email], (err, result) => {
@@ -54,7 +52,6 @@ exports.createUser = async (req, res) => {
       return;
     }
 
-    // Email does not exist, proceed with insertion
     const insertQuery = `INSERT INTO users (email, password) VALUES (?, ?)`;
 
     pool.query(
@@ -73,7 +70,6 @@ exports.createUser = async (req, res) => {
     );
   });
 
-  // Check if the email already exists in the "users" table
   const existingUser = await User.findOne({ where: { email } });
   if (existingUser) {
     console.log("Existing user found:", email);
@@ -82,7 +78,6 @@ exports.createUser = async (req, res) => {
       .json({ message: "This email has already been used." });
   }
 
-  // Call the createUser function on the User model
   User.create(EduconnectUserData, async (error, result) => {
     try {
       if (error) {

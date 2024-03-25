@@ -17,7 +17,15 @@ import FormControl from "@mui/material/FormControl";
 import authServiceInstance from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
 import courseServiceInstance from "../services/CourseService";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import coursebanner1 from "../images/coursebanner1.jpg";
+import coursebanner2 from "../images/coursebanner2.jpg";
+import coursebanner3 from "../images/coursebanner3.jpg";
+import coursebanner4 from "../images/coursebanner4.jpg";
+
+import "../index.css";
 
 const sections = [
   { title: "Courses", url: "/courses" },
@@ -35,9 +43,22 @@ export default function Home() {
   const [loading, setLoading] = React.useState(true);
   const [courses, setCourses] = useState([]);
   const [semester, setSemester] = useState("");
+  // eslint-disable-next-line no-unused-vars
   const [currentCourses, setCurrentCourses] = useState([]);
 
-  console.log(currentCourses);
+  const [carouselImages, setCarouselImages] = useState([
+    coursebanner1,
+    coursebanner2,
+    coursebanner3,
+    coursebanner4,
+  ]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      setCarouselImages([]);
+    }
+  }, [isAdmin]);
+
   React.useEffect(() => {
     setIsAdmin(authServiceInstance.isAdmin("admin@educonnect.sg"));
     setLoading(false);
@@ -48,7 +69,6 @@ export default function Home() {
     try {
       const coursesData = await courseServiceInstance.fetchCourses();
       setCourses(coursesData);
-
       if (coursesData.length > 0) {
         const firstSemester = coursesData[0].semester;
         setSemester(firstSemester);
@@ -71,14 +91,37 @@ export default function Home() {
 
   const handleManageClick = (course) => {
     navigate(`/courses/manage`, { state: { course } });
-  };  
+  };
+  const handleFindOutMoreClick = (course) => {
+    navigate(`/courses/enroll/${course.courseId}`, {
+      state: { courseId: course.courseId },
+    });
+  };
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <Header title={""} sections={sections} />
       <Container maxWidth="lg">
-        <Header title={""} sections={sections} />
         <main>
+          {!isAdmin && (
+            <Carousel
+              autoPlay={true}
+              interval={5000}
+              infiniteLoop={true}
+              showThumbs={false} // Hide the thumbnails
+            >
+              {carouselImages.map((image, index) => (
+                <div key={index} className="carousel-item">
+                  <img src={image} alt={`Carousel ${index + 1}`} />
+                  <div className="carousel-typography">
+                    <Typography variant="h6">Title</Typography>
+                    <Typography variant="body1">Description</Typography>
+                  </div>
+                </div>
+              ))}
+            </Carousel>
+          )}
           <FormControl sx={{ m: 1, minWidth: 100 }}>
             <Select
               labelId="semester-label"
@@ -120,15 +163,19 @@ export default function Home() {
                         <br />
                         {isAdmin ? (
                           <Button
-                          variant="contained"
-                          color="secondary"
-                          onClick={() => handleManageClick(course)}
-                        >
-                          Manage
-                        </Button>                        
+                            variant="contained"
+                            color="secondary"
+                            onClick={() => handleManageClick(course)}
+                          >
+                            Manage
+                          </Button>
                         ) : (
-                          <Button variant="contained" color="primary">
-                            Enroll Now
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleFindOutMoreClick(course)}
+                          >
+                            Find Out More..
                           </Button>
                         )}
                       </CardContent>

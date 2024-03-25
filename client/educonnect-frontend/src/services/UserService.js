@@ -1,5 +1,12 @@
 class UserService {
-  async registerUser(name, company, occupation, mobile_number, email, password) {
+  async registerUser(
+    name,
+    company,
+    occupation,
+    mobile_number,
+    email,
+    password
+  ) {
     const REGISTER_USER_API_URL = "http://localhost:3001/api/users/register";
     try {
       const response = await fetch(REGISTER_USER_API_URL, {
@@ -26,6 +33,16 @@ class UserService {
       console.error("An error occurred during user registration:", error);
       throw error; // Rethrow the error to be handled by the caller
     }
+  }
+
+  async forgotPassword(email) {
+    // Simulate asynchronous behavior (e.g., API request)
+    return new Promise((resolve, reject) => {
+      // Simulate success after 1 second
+      setTimeout(() => {
+        resolve(); // Resolve without any value
+      }, 1000);
+    });
   }
 }
 

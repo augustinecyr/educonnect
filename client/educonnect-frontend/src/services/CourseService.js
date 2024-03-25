@@ -13,6 +13,16 @@ class CourseService {
     }
   }
 
+  async fetchCourseById(courseId) {
+    try {
+      const response = await axios.get(`${API_URL}/fetch/${courseId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching course by ID:", error);
+      throw error;
+    }
+  }
+
   async createCourse(courseData) {
     try {
       const response = await axios.post(`${API_URL}/create`, courseData);

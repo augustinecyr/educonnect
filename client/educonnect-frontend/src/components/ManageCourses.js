@@ -23,10 +23,17 @@ import {
   DialogActions,
   Typography,
   MenuItem,
+  LinearProgress,
 } from "@mui/material";
-import { Delete as DeleteIcon, Edit as EditIcon } from "@mui/icons-material";
+import {
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Clear as ClearIcon,
+  Refresh as RefreshIcon,
+} from "@mui/icons-material";
 import courseServiceInstance from "../services/CourseService";
 import { useLocation, Link } from "react-router-dom";
+import {} from "@mui/icons-material";
 
 const sections = [
   { title: "Courses", url: "/courses" },
@@ -53,6 +60,7 @@ const ManageCourses = () => {
   const [semesterFilter, setSemesterFilter] = useState("");
   const semesters = [...new Set(courses.map((course) => course.semester))];
   const [filteredCourses, setFilteredCourses] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   console.log("User has a valid token:", isAuthenticated);
   console.log("User is an Admin", isAdmin);
@@ -82,14 +90,17 @@ const ManageCourses = () => {
 
   const fetchCoursesData = async () => {
     try {
+      setIsRefreshing(true);
+      await new Promise((resolve) => setTimeout(resolve, 2200));
       const coursesData = await courseServiceInstance.fetchCourses();
       setCourses(coursesData);
+      setIsRefreshing(false);
     } catch (error) {
       setErrorMessage("Failed to retrieve data.");
       console.error("Error fetching courses:", error);
+      setIsRefreshing(false);
     }
   };
-
   const handleEdit = (course) => {
     setSemester(course.semester);
     setTitle(course.title);
@@ -149,8 +160,8 @@ const ManageCourses = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <Header title={""} sections={sections} />
       <Container maxWidth="lg">
-        <Header title={""} sections={sections}></Header>
         <br />
         <main style={{ display: "flex", flexDirection: "column" }}>
           <div
@@ -161,13 +172,26 @@ const ManageCourses = () => {
             }}
           >
             <h2>Course Management</h2>
-            <Link to="/courses/create" style={{ textDecoration: "none" }}>
-              <Button color="primary" variant="contained">
-                Create Course
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={fetchCoursesData}
+                disabled={isRefreshing}
+              >
+                <RefreshIcon />
               </Button>
-            </Link>
+              <Link
+                to="/courses/create"
+                style={{ textDecoration: "none", marginLeft: "10px" }}
+              >
+                <Button color="primary" variant="contained">
+                  Create Course
+                </Button>
+              </Link>
+            </div>
           </div>
-          {/* Filter Dropdown */}
+
           <TextField
             select
             label="Filter by Semester"
@@ -183,6 +207,8 @@ const ManageCourses = () => {
               </MenuItem>
             ))}
           </TextField>
+          {isRefreshing && <LinearProgress style={{ width: "1150px" }} />}
+
           <List>
             {filteredCourses.map((course) => (
               <Accordion key={course.courseId} style={{ marginBottom: "8px" }}>
@@ -244,17 +270,35 @@ const ManageCourses = () => {
                       required
                     />
                     {videoUrls.split(",").map((url, index) => (
-                      <TextField
+                      <div
                         key={index}
-                        label={`Video URL ${index + 1}`}
-                        value={url}
-                        onChange={(e) => {
-                          const updatedUrls = videoUrls.split(",");
-                          updatedUrls[index] = e.target.value;
-                          setVideoUrls(updatedUrls.join(","));
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: "16px",
                         }}
-                        placeholder={url || "Enter Video URL"}
-                      />
+                      >
+                        <TextField
+                          label={`Video URL ${index + 1}`}
+                          value={url}
+                          onChange={(e) => {
+                            const updatedUrls = videoUrls.split(",");
+                            updatedUrls[index] = e.target.value;
+                            setVideoUrls(updatedUrls.join(","));
+                          }}
+                          placeholder={url || "Enter Video URL"}
+                          style={{ marginRight: "8px", flex: 1 }}
+                        />
+                        <ClearIcon
+                          style={{ color: "#757575", cursor: "pointer" }}
+                          onClick={() => {
+                            const updatedUrls = videoUrls.split(",");
+                            updatedUrls.splice(index, 1);
+                            setVideoUrls(updatedUrls.join(","));
+                          }}
+                        />
+                      </div>
                     ))}
                     <Button
                       color="primary"
