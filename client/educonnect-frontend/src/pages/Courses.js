@@ -98,6 +98,12 @@ export default function Home() {
     });
   };
 
+  const handlePreviewClick = (course) => {
+    navigate(`/courses/preview/${course.courseId}`, {
+      state: { courseId: course.courseId },
+    });
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -162,13 +168,23 @@ export default function Home() {
                         </Typography>
                         <br />
                         {isAdmin ? (
-                          <Button
-                            variant="contained"
-                            color="secondary"
-                            onClick={() => handleManageClick(course)}
-                          >
-                            Manage
-                          </Button>
+                          <div>
+                            <Button
+                              variant="contained"
+                              color="secondary"
+                              onClick={() => handleManageClick(course)}
+                              sx={{ marginRight: 1 }}
+                            >
+                              Manage
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => handlePreviewClick(course)}
+                            >
+                              Preview
+                            </Button>
+                          </div>
                         ) : (
                           <Button
                             variant="contained"

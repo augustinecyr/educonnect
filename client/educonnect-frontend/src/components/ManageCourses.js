@@ -30,6 +30,7 @@ import {
   Edit as EditIcon,
   Clear as ClearIcon,
   Refresh as RefreshIcon,
+  CloudUpload,
 } from "@mui/icons-material";
 import courseServiceInstance from "../services/CourseService";
 import { useLocation, Link } from "react-router-dom";
@@ -106,7 +107,12 @@ const ManageCourses = () => {
     setTitle(course.title);
     setDescription(course.description);
     setVideoUrls(course.videoUrl);
-    setAttachmentUrl(course.attachmentUrl);
+    const reader = new FileReader();
+    reader.readAsDataURL(new Blob([course.attachmentUrl]));
+    reader.onload = () => {
+      setAttachmentUrl(reader.result);
+      console.log(attachmentUrl);
+    };
   };
 
   const handleUpdate = async (courseId) => {
@@ -267,6 +273,7 @@ const ManageCourses = () => {
                       label="Description"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
+                      multiline
                       required
                     />
                     {videoUrls.split(",").map((url, index) => (
@@ -308,42 +315,59 @@ const ManageCourses = () => {
                     >
                       Add Video URL
                     </Button>
-                    <label htmlFor="attachment-upload">
-                      <Button
-                        color="primary"
-                        variant="contained"
-                        component="span"
-                        style={{ marginTop: "8px" }}
-                      >
-                        Upload Attachment
-                      </Button>
-                    </label>
-                    <input
-                      accept="*"
-                      style={{ display: "none" }}
-                      id="attachment-upload"
-                      type="file"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                          setAttachmentUrl(file);
-                          document.getElementById(
-                            "attachment-label"
-                          ).textContent = file.name;
-                        } else {
-                          setAttachmentUrl(null);
-                          document.getElementById(
-                            "attachment-label"
-                          ).textContent = "No file selected";
-                        }
-                      }}
-                    />
-                    <span
-                      id="attachment-label"
-                      style={{ marginLeft: "8px", fontSize: "14px" }}
-                    >
-                      {attachmentUrl ? attachmentUrl.name : "No file selected"}
-                    </span>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <TextField
+                        label="Attachment"
+                        value={attachmentUrl || ""}
+                        InputProps={{
+                          readOnly: true,
+                        }}
+                        fullWidth
+                        variant="outlined"
+                        style={{ marginBottom: "16px", marginRight: "8px" }}
+                      />
+                      <label htmlFor="attachment-upload">
+                        <Button
+                          color="primary"
+                          variant="contained"
+                          component="span"
+                          style={{ marginTop: "8px" }}
+                        >
+                          <CloudUpload />
+                        </Button>
+                      </label>
+                      <input
+                        accept="*"
+                        style={{ display: "none" }}
+                        id="attachment-upload"
+                        type="file"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const fileUrl = URL.createObjectURL(file);
+                            setAttachmentUrl(fileUrl);
+                            document.getElementById(
+                              "attachment-label"
+                            ).textContent = file.name;
+                          } else {
+                            setAttachmentUrl(null);
+                            document.getElementById(
+                              "attachment-label"
+                            ).textContent = "No file selected";
+                          }
+                        }}
+                      />
+                      {attachmentUrl && (
+                        <div style={{ marginLeft: "8px" }}>
+                          <ClearIcon
+                            style={{ color: "#757575", cursor: "pointer" }}
+                            onClick={() => {
+                              setAttachmentUrl(null);
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
                     <Button
                       color="primary"
                       variant="contained"

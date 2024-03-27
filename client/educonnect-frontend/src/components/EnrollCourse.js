@@ -16,6 +16,7 @@ import Footer from "./Footer";
 import theme from "../themes/Theme";
 import courseServiceInstance from "../services/CourseService";
 import { ThemeProvider } from "@mui/material/styles";
+import { useState ,useEffect } from "react";
 
 const sections = [
   { title: "Courses", url: "/courses" },
@@ -28,10 +29,10 @@ const EnrollCourse = () => {
   const location = useLocation();
   const { state } = location;
   const courseId = state ? state.courseId : null;
-  const [course, setCourse] = React.useState();
-  const [tabValue, setTabValue] = React.useState(0);
-
-  React.useEffect(() => {
+  const [course, setCourse] = useState();
+  const [tabValue, setTabValue] = useState(0);
+  
+  useEffect(() => {
     if (courseId) {
       fetchCourseData(courseId);
     }
@@ -103,7 +104,7 @@ const EnrollCourse = () => {
                         <div key={index} style={{ marginBottom: "20px" }}>
                           <iframe
                             width="100%"
-                            height="400"
+                            height="600"
                             src={`https://www.youtube.com/embed/${extractVideoId(
                               url
                             )}`}

@@ -26,6 +26,7 @@ function AppRouter() {
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/courses/enroll/:courseId" element={<EnrollCourse/>} />
+        <Route path="/courses/preview/:courseId" element={<EnrollCourse />} />
         <Route element={<PrivateRoutes />}>
           <Route path="/courses/manage" element={<ManageCourses />} />
           <Route path="/courses/create" element={<CreateCourse />} />
