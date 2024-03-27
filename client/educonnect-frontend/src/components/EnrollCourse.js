@@ -10,13 +10,14 @@ import {
   Tabs,
   Tab,
   Box,
+  Button,
 } from "@mui/material";
 import Header from "./Header";
 import Footer from "./Footer";
 import theme from "../themes/Theme";
 import courseServiceInstance from "../services/CourseService";
 import { ThemeProvider } from "@mui/material/styles";
-import { useState ,useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const sections = [
   { title: "Courses", url: "/courses" },
@@ -31,7 +32,9 @@ const EnrollCourse = () => {
   const courseId = state ? state.courseId : null;
   const [course, setCourse] = useState();
   const [tabValue, setTabValue] = useState(0);
-  
+  const [attachmentName, setAttachmentName] = useState("");
+  const [attachmentUrl, setAttachmentUrl] = useState("");
+
   useEffect(() => {
     if (courseId) {
       fetchCourseData(courseId);
@@ -57,6 +60,31 @@ const EnrollCourse = () => {
       /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/(?:watch\?v=)?([^\s&]+)/
     );
     return match ? match[1] : null;
+  };
+
+  const handleDownloadPdf = () => {
+    if (course.attachmentUrl) {
+      const reader = new FileReader();
+      reader.readAsDataURL(new Blob([course.attachmentUrl]));
+      reader.onload = () => {
+        setAttachmentUrl(reader.result);
+        setAttachmentName(reader.result);
+        console.log(attachmentUrl);
+      };
+      const blob = b64toBlob(course.attachmentUrl);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", attachmentName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  const b64toBlob = (bufferData) => {
+    const byteArray = new Uint8Array(bufferData.data);
+    return new Blob([byteArray], { type: "application/pdf" });
   };
 
   return (
@@ -95,9 +123,11 @@ const EnrollCourse = () => {
             <Grid item xs={12}>
               <Card>
                 <CardContent>
-                  <Typography gutterBottom variant="h4" component="div">
-                    Videos
-                  </Typography>
+                  <Typography
+                    gutterBottom
+                    variant="h4"
+                    component="div"
+                  ></Typography>
                   {course?.videoUrl && (
                     <div>
                       {course.videoUrl.split(",").map((url, index) => (
@@ -109,7 +139,6 @@ const EnrollCourse = () => {
                               url
                             )}`}
                             title={`Video ${index + 1}`}
-                            frameBorder="0"
                             allowFullScreen
                           ></iframe>
                         </div>
@@ -129,14 +158,14 @@ const EnrollCourse = () => {
                   <Typography gutterBottom variant="h4" component="div">
                     Resources
                   </Typography>
-                  {course?.attachmentUrl && (
-                    <a
-                      href={course?.attachmentUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      View Resources
-                    </a>
+                  {course && course.attachmentUrl && (
+                    <div>
+                      <Typography variant="body1">
+                        Filename: {attachmentName || "No file selected"}
+                      </Typography>
+                      <Button onClick={handleDownloadPdf}>Download PDF</Button>
+                      {/* You can also display the PDF content here if needed */}
+                    </div>
                   )}
                 </CardContent>
               </Card>

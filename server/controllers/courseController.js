@@ -93,3 +93,20 @@ exports.deleteCourse = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+exports.getSemesters = async (req, res) => {
+  try {
+    const semesters = await Course.findAll({
+      attributes: ["semester"],
+      group: ["semester"],
+    });
+
+    const uniqueSemesters = semesters.map((course) => course.semester);
+
+    res.status(200).json(uniqueSemesters);
+    console.log("Unique semesters:", uniqueSemesters);
+  } catch (error) {
+    console.error("Error retrieving semesters:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

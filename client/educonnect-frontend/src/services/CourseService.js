@@ -13,6 +13,16 @@ class CourseService {
     }
   }
 
+  async fetchSemesters() {
+    try {
+      const response = await axios.get(`${API_URL}/semesters`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching semesters:", error);
+      throw error;
+    }
+  }
+
   async fetchCourseById(courseId) {
     try {
       const response = await axios.get(`${API_URL}/fetch/${courseId}`);

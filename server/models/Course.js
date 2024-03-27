@@ -11,7 +11,6 @@ const Course = sequelize.define("educonnect_courses", {
   semester: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
   title: {
     type: DataTypes.STRING,

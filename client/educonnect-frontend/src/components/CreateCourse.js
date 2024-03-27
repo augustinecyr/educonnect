@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../themes/Theme";
 import Container from "@mui/material/Container";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import authServiceInstance from "../services/AuthService";
-import { CssBaseline, TextField, Button, Snackbar } from "@mui/material";
+import {
+  CssBaseline,
+  TextField,
+  Button,
+  Snackbar,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import courseServiceInstance from "../services/CourseService";
 import { Link } from "react-router-dom";
 import "../index.css";
@@ -20,43 +27,47 @@ const sections = [
 const CreateCourse = () => {
   const isAuthenticated = authServiceInstance.isAuthenticated();
   const isAdmin = authServiceInstance.isAdmin("admin@educonnect.sg");
-  const [courseId, setCourseId] = useState(""); // Add courseId state
+  const [courseId, setCourseId] = useState("");
   const [semester, setSemester] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  //const [videoUrl, setVideoUrl] = useState("");
- // const [attachmentUrl, setAttachmentUrl] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [semesters, setSemesters] = useState([]);
 
   console.log("User has a valid token:", isAuthenticated);
   console.log("User is an Admin", isAdmin);
 
+  useEffect(() => {
+    async function fetchSemesters() {
+      try {
+        const semestersData = await courseServiceInstance.fetchSemesters();
+        setSemesters(semestersData);
+        console.log(semestersData);
+      } catch (error) {
+        console.error("Error fetching semesters:", error);
+      }
+    }
+    fetchSemesters();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Create the course using courseServiceInstance
       await courseServiceInstance.createCourse({
-        courseId, // Pass courseId to the createCourse function
+        courseId,
         semester,
         title,
         description,
-      //  videoUrl,
-       // attachmentUrl,
       });
       setSuccessMessage("Course was created successfully!");
-      // Clear the form after successful submission
-      setCourseId(""); // Clear courseId as well
+      setCourseId("");
       setSemester("");
       setTitle("");
       setDescription("");
-   //   setVideoUrl("");
-   //   setAttachmentUrl("");
-      // You can also show a success message or redirect the user
     } catch (error) {
       setErrorMessage("Failed to create course!");
       console.error("Error:", error);
-      // Handle error (show error message, etc.)
     }
   };
 
@@ -67,9 +78,8 @@ const CreateCourse = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-        <Header title={""} sections={sections} />
-        <Container maxWidth="lg">
-
+      <Header title={""} sections={sections} />
+      <Container maxWidth="lg">
         <br />
         <main>
           <Link to="/courses/manage">
@@ -90,16 +100,31 @@ const CreateCourse = () => {
               onChange={(e) => setCourseId(e.target.value)}
               margin="normal"
               required
+              placeholder="EDUXXXX (e.g., EDU001)"
+              InputProps={{
+                inputProps: {
+                  pattern: "EDU[0-9]{4}", // Enforces the format COURSEXXXX
+                },
+              }}
             />
-            <TextField
+            <Select
               fullWidth
               variant="outlined"
-              label="Semester"
               value={semester}
               onChange={(e) => setSemester(e.target.value)}
               required
+              displayEmpty
               margin="normal"
-            />
+            >
+              <MenuItem value="" disabled>
+                Select Semester
+              </MenuItem>
+              {semesters.map((semesterValue, index) => (
+                <MenuItem key={index} value={semesterValue}>
+                  {semesterValue}
+                </MenuItem>
+              ))}
+            </Select>
             <TextField
               fullWidth
               variant="outlined"
@@ -120,7 +145,6 @@ const CreateCourse = () => {
               rows={4}
               margin="normal"
             />
-           
             <br></br>
             <br></br>
             <Button
@@ -138,10 +162,10 @@ const CreateCourse = () => {
           autoHideDuration={6000}
           onClose={handleCloseSnackbar}
           message={successMessage || errorMessage}
-          anchorOrigin={{ vertical: "top", horizontal: "right" }} // Snackbar appears at the top right corner
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
           ContentProps={{
             sx: {
-              backgroundColor: successMessage ? "#4caf50" : "#f44336", // Change background color based on success or error message
+              backgroundColor: successMessage ? "#4caf50" : "#f44336",
             },
           }}
         />

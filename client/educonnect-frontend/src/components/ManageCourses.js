@@ -62,6 +62,7 @@ const ManageCourses = () => {
   const semesters = [...new Set(courses.map((course) => course.semester))];
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [attachmentName, setAttachmentName] = useState("");
 
   console.log("User has a valid token:", isAuthenticated);
   console.log("User is an Admin", isAdmin);
@@ -102,15 +103,17 @@ const ManageCourses = () => {
       setIsRefreshing(false);
     }
   };
+
   const handleEdit = (course) => {
     setSemester(course.semester);
     setTitle(course.title);
     setDescription(course.description);
-    setVideoUrls(course.videoUrl);
+    setVideoUrls(course.videoUrl || "");
     const reader = new FileReader();
     reader.readAsDataURL(new Blob([course.attachmentUrl]));
     reader.onload = () => {
       setAttachmentUrl(reader.result);
+      setAttachmentName(reader.result);
       console.log(attachmentUrl);
     };
   };
@@ -122,7 +125,7 @@ const ManageCourses = () => {
         title,
         description,
         videoUrls,
-        attachmentUrl,
+        attachmentUrl: attachmentUrl || null,
       };
       await courseServiceInstance.editCourse(courseId, courseData);
       setSuccessMessage("Course updated successfully");
@@ -318,7 +321,7 @@ const ManageCourses = () => {
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <TextField
                         label="Attachment"
-                        value={attachmentUrl || ""}
+                        value={attachmentName || ""}
                         InputProps={{
                           readOnly: true,
                         }}
@@ -331,7 +334,7 @@ const ManageCourses = () => {
                           color="primary"
                           variant="contained"
                           component="span"
-                          style={{ marginTop: "8px" }}
+                          style={{ marginBottom: "16px", height: "40px" }}
                         >
                           <CloudUpload />
                         </Button>
@@ -344,16 +347,13 @@ const ManageCourses = () => {
                         onChange={(e) => {
                           const file = e.target.files[0];
                           if (file) {
+                            const fileName = file.name;
                             const fileUrl = URL.createObjectURL(file);
                             setAttachmentUrl(fileUrl);
-                            document.getElementById(
-                              "attachment-label"
-                            ).textContent = file.name;
+                            setAttachmentName(fileName);
                           } else {
-                            setAttachmentUrl(null);
-                            document.getElementById(
-                              "attachment-label"
-                            ).textContent = "No file selected";
+                            setAttachmentUrl("");
+                            setAttachmentName("");
                           }
                         }}
                       />
@@ -362,12 +362,13 @@ const ManageCourses = () => {
                           <ClearIcon
                             style={{ color: "#757575", cursor: "pointer" }}
                             onClick={() => {
-                              setAttachmentUrl(null);
+                              setAttachmentUrl("");
+                              setAttachmentName("");
                             }}
                           />
                         </div>
                       )}
-                    </div>
+                    </div>{" "}
                     <Button
                       color="primary"
                       variant="contained"
