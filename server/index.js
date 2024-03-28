@@ -1,4 +1,4 @@
-// this file is the main interface
+/// this file is the main interface
 const express = require("express");
 const app = express();
 // .env file config
