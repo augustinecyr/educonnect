@@ -9,5 +9,6 @@ router.put("/edit/:courseId", courseController.editCourse);
 router.delete("/delete/:courseId", courseController.deleteCourse);
 router.get("/semesters", courseController.getSemesters);
 router.post("/enroll/:courseId", courseController.enrollCourse);
+router.get("/enrollment-list", courseController.getEnrollmentList);
 
 module.exports = router;

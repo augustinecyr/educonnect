@@ -18,6 +18,7 @@ import theme from "../themes/Theme";
 import courseServiceInstance from "../services/CourseService";
 import { ThemeProvider } from "@mui/material/styles";
 import { useState, useEffect } from "react";
+import { Snackbar, SnackbarContent } from "@mui/material";
 
 const sections = [
   { title: "Courses", url: "/courses" },
@@ -35,10 +36,15 @@ const EnrollCourse = () => {
   const [attachmentName, setAttachmentName] = useState("");
   const [attachmentUrl, setAttachmentUrl] = useState("");
   const email = localStorage.getItem("email");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarStatus, setSnackbarStatus] = useState("success");
+  const [enrolled, setEnrolled] = useState(false);
 
   useEffect(() => {
     if (courseId) {
       fetchCourseData(courseId);
+      fetchEnrollmentData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId]);
@@ -49,6 +55,19 @@ const EnrollCourse = () => {
       setCourse(courseData);
     } catch (error) {
       console.error("Error fetching course:", error);
+    }
+  };
+
+  const fetchEnrollmentData = async () => {
+    try {
+      const enrollmentList = await courseServiceInstance.fetchEnrollmentList();
+      const isEnrolled = enrollmentList.some(
+        (enrollment) =>
+          enrollment.email === email && enrollment.courseId === courseId
+      );
+      setEnrolled(isEnrolled);
+    } catch (error) {
+      console.error("Error fetching enrollment list:", error);
     }
   };
 
@@ -91,10 +110,17 @@ const EnrollCourse = () => {
   const handleEnroll = async () => {
     try {
       await courseServiceInstance.enrollCourse(courseId, email);
-      alert("Enrolled successfully!");
+      setSnackbarMessage("Enrolled successfully!");
+      setSnackbarStatus("success");
+      setSnackbarOpen(true);
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      window.location.reload();
     } catch (error) {
       console.error("Error enrolling in course:", error);
-      alert("Failed to enroll in the course. Please try again later.");
+      setSnackbarMessage("Failed to enroll in the course.");
+      setSnackbarStatus("error");
+      setSnackbarOpen(true);
     }
   };
 
@@ -118,8 +144,13 @@ const EnrollCourse = () => {
             <Tab label="Videos" />
             <Tab label="Resources" />
           </Tabs>
-          <Button color="primary" variant="contained" onClick={handleEnroll}>
-            Enroll
+          <Button 
+            color="primary"
+            variant="contained"
+            onClick={handleEnroll}
+            disabled={enrolled}
+          >
+            {enrolled ? "Enrolled" : "Enroll"}{" "}
           </Button>{" "}
         </Box>
         {tabValue === 0 && (
@@ -194,6 +225,23 @@ const EnrollCourse = () => {
             </Grid>
           </Grid>
         )}
+        <Snackbar
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          open={snackbarOpen}
+          autoHideDuration={6000}
+          onClose={() => setSnackbarOpen(false)}
+        >
+          <SnackbarContent
+            style={{
+              backgroundColor:
+                snackbarStatus === "success" ? "#4caf50" : "#f44336",
+            }}
+            message={snackbarMessage}
+          />
+        </Snackbar>
       </Container>
       <Footer />
     </ThemeProvider>

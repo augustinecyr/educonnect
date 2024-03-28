@@ -141,3 +141,14 @@ exports.enrollCourse = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+exports.getEnrollmentList = async (req, res) => {
+  try {
+    const enrollmentlist = await UserEnrollment.findAll();
+    res.status(200).json(enrollmentlist);
+    console.log("Enrollment List:", enrollmentlist);
+  } catch (error) {
+    console.error("Error retrieving list:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
