@@ -19,6 +19,7 @@ import courseServiceInstance from "../services/CourseService";
 import { ThemeProvider } from "@mui/material/styles";
 import { useState, useEffect } from "react";
 import { Snackbar, SnackbarContent } from "@mui/material";
+import authServiceInstance from "../services/AuthService";
 
 const sections = [
   { title: "Courses", url: "/courses" },
@@ -40,6 +41,11 @@ const EnrollCourse = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarStatus, setSnackbarStatus] = useState("success");
   const [enrolled, setEnrolled] = useState(false);
+
+  const isAuthenticated = authServiceInstance.isAuthenticated();
+  const isAdmin = authServiceInstance.isAdmin("admin@educonnect.sg");
+  console.log("User has a valid token:", isAuthenticated);
+  console.log("User is an Admin", isAdmin);
 
   useEffect(() => {
     if (courseId) {
@@ -144,14 +150,16 @@ const EnrollCourse = () => {
             <Tab label="Videos" />
             <Tab label="Resources" />
           </Tabs>
-          <Button 
-            color="primary"
-            variant="contained"
-            onClick={handleEnroll}
-            disabled={enrolled}
-          >
-            {enrolled ? "Enrolled" : "Enroll"}{" "}
-          </Button>{" "}
+          {!isAdmin && (
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={handleEnroll}
+              disabled={enrolled}
+            >
+              {enrolled ? "Enrolled" : "Enroll"}{" "}
+            </Button>
+          )}
         </Box>
         {tabValue === 0 && (
           <Grid container spacing={4}>
