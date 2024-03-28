@@ -34,6 +34,7 @@ const EnrollCourse = () => {
   const [tabValue, setTabValue] = useState(0);
   const [attachmentName, setAttachmentName] = useState("");
   const [attachmentUrl, setAttachmentUrl] = useState("");
+  const email = localStorage.getItem("email");
 
   useEffect(() => {
     if (courseId) {
@@ -87,17 +88,39 @@ const EnrollCourse = () => {
     return new Blob([byteArray], { type: "application/pdf" });
   };
 
+  const handleEnroll = async () => {
+    try {
+      await courseServiceInstance.enrollCourse(courseId, email);
+      alert("Enrolled successfully!");
+    } catch (error) {
+      console.error("Error enrolling in course:", error);
+      alert("Failed to enroll in the course. Please try again later.");
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Header title={""} sections={sections} />
       <Container maxWidth="lg">
-        <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderBottom: 1,
+            borderColor: "divider",
+            mb: 2,
+          }}
+        >
           <Tabs value={tabValue} onChange={handleChangeTab}>
             <Tab label="Overview" />
             <Tab label="Videos" />
             <Tab label="Resources" />
           </Tabs>
+          <Button color="primary" variant="contained" onClick={handleEnroll}>
+            Enroll
+          </Button>{" "}
         </Box>
         {tabValue === 0 && (
           <Grid container spacing={4}>
@@ -164,7 +187,6 @@ const EnrollCourse = () => {
                         Filename: {attachmentName || "No file selected"}
                       </Typography>
                       <Button onClick={handleDownloadPdf}>Download PDF</Button>
-                      {/* You can also display the PDF content here if needed */}
                     </div>
                   )}
                 </CardContent>

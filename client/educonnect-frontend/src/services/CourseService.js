@@ -65,6 +65,17 @@ class CourseService {
       throw error;
     }
   }
+  async enrollCourse(courseId, email) {
+    try {
+      const response = await axios.post(`${API_URL}/enroll/${courseId}`, {
+        email,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error enrolling in course:", error);
+      throw error;
+    }
+  }
 }
 
 const courseServiceInstance = new CourseService();

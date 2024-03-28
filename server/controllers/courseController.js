@@ -1,4 +1,5 @@
 const Course = require("../models/Course");
+const UserEnrollment = require("../models/UserEnrollment");
 
 exports.createCourse = async (req, res) => {
   try {
@@ -107,6 +108,36 @@ exports.getSemesters = async (req, res) => {
     console.log("Unique semesters:", uniqueSemesters);
   } catch (error) {
     console.error("Error retrieving semesters:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+exports.enrollCourse = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const courseId = req.params.courseId;
+
+    const existingEnrollment = await UserEnrollment.findOne({
+      where: { email, courseId },
+    });
+
+    if (existingEnrollment) {
+      return res
+        .status(400)
+        .json({ message: "User already enrolled in the course" });
+    }
+
+    const newEnrollment = await UserEnrollment.create({
+      email,
+      courseId,
+    });
+
+    res.status(201).json({
+      message: "Enrollment created successfully",
+      enrollment: newEnrollment,
+    });
+  } catch (error) {
+    console.error("Error enrolling in the course:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
