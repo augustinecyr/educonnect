@@ -14,9 +14,9 @@ import Typography from "@mui/material/Typography";
 import { ThemeProvider } from "@mui/material/styles";
 import { useForm } from "react-hook-form";
 import theme from "../themes/Theme";
-import UserService from "../services/UserService"; // Import your UserService
-import Visibility from "@mui/icons-material/Visibility"; // Import visibility icon
-import VisibilityOff from "@mui/icons-material/VisibilityOff"; // Import visibility off icon
+import UserService from "../services/UserService"; 
+import Visibility from "@mui/icons-material/Visibility"; 
+import VisibilityOff from "@mui/icons-material/VisibilityOff"; 
 import { Select, MenuItem } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import PhoneIphoneIcon from "@mui/icons-material/PhoneIphone";
@@ -28,7 +28,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-} from "@mui/material"; // Import necessary components for pop-up box
+} from "@mui/material"; 
 import loginpage from "../images/login-page.jpg";
 function Copyright(props) {
   return (
@@ -52,9 +52,9 @@ function RegisterUser() {
   const navigate = useNavigate();
   const [occupation, setOccupation] = useState("");
   const [customOccupation, setCustomOccupation] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State variable for password visibility
-  const [open, setOpen] = useState(false); // State variable for controlling the visibility of the pop-up box
-  const [success, setSuccess] = useState(false); // State variable for indicating whether registration was successful
+  const [showPassword, setShowPassword] = useState(false); 
+  const [open, setOpen] = useState(false); 
+  const [success, setSuccess] = useState(false); 
   const {
     register,
     handleSubmit,
@@ -65,32 +65,32 @@ function RegisterUser() {
 
   const onSubmit = async (data) => {
     try {
-      // Form the data object based on the form
-      const { name, company, occupation, mobile_number, email, password } =
-        data;
+      const { name, company, mobile_number, email, password } = data;
+      let occupationToSend = occupation; 
+      if (occupation === "others") {
+        occupationToSend = customOccupation;
+      }
       setSuccess(true);
       setOpen(true);
-      // Call the register method of UserService
       await UserService.registerUser(
         name,
         company,
-        occupation,
+        occupationToSend, 
         mobile_number,
         email,
         password
       );
     } catch (error) {
       console.error(error.message);
-      // Handle registration error (e.g., display error message)
       reset();
       setSuccess(false);
     }
   };
-
+  
   const handleClose = () => {
-    setOpen(false); // Close the pop-up box
+    setOpen(false); 
     if (success) {
-      navigate("/login"); // If registration was successful, navigate to login page
+      navigate("/login"); 
     }
   };
 
@@ -108,7 +108,7 @@ function RegisterUser() {
   };
 
   const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword); // Toggle password visibility
+    setShowPassword((prevShowPassword) => !prevShowPassword); 
   };
 
   return (
@@ -232,7 +232,7 @@ function RegisterUser() {
                     <InputAdornment position="end">
                       <IconButton
                         aria-label="clear mobile number"
-                        onClick={() => setValue("mobile_number", "")} // assuming you're using setValue from react-hook-form
+                        onClick={() => setValue("mobile_number", "")} 
                         edge="end"
                       >
                         <ClearIcon color="action" />
@@ -266,7 +266,7 @@ function RegisterUser() {
                 fullWidth
                 name="password"
                 label="Password"
-                type={showPassword ? "text" : "password"} // Toggle password visibility
+                type={showPassword ? "text" : "password"} 
                 id="password"
                 autoComplete="new-password"
                 inputProps={{

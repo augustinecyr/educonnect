@@ -14,6 +14,7 @@ import ManageCourses from "../components/ManageCourses";
 import CreateCourse from "../components/CreateCourse";
 import PrivateRoutes from "./PrivateRoutes";
 import EnrollCourse from "../components/EnrollCourse";
+import Profile from "../pages/Profile";
 
 function AppRouter() {
   return (
@@ -26,6 +27,7 @@ function AppRouter() {
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/courses/enroll/:courseId" element={<EnrollCourse />} />
+        <Route path="/profile" element={<Profile />} />
         <Route element={<PrivateRoutes />}>
           <Route path="/courses/manage" element={<ManageCourses />} />
           <Route path="/courses/create" element={<CreateCourse />} />

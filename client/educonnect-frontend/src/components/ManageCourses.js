@@ -109,12 +109,14 @@ const ManageCourses = () => {
     setTitle(course.title);
     setDescription(course.description);
     setVideoUrls(course.videoUrl || "");
+    setAttachmentUrl(course.attachmentUrl);
+
     const reader = new FileReader();
     reader.readAsDataURL(new Blob([course.attachmentUrl]));
     reader.onload = () => {
-      setAttachmentUrl(reader.result);
+      //    setAttachmentUrl(reader.result);
       setAttachmentName(reader.result);
-      console.log(attachmentUrl);
+      console.log(attachmentName);
     };
   };
 
@@ -279,37 +281,38 @@ const ManageCourses = () => {
                       multiline
                       required
                     />
-                    {videoUrls.split(",").map((url, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          alignItems: "center",
-                          gap: "16px",
-                        }}
-                      >
-                        <TextField
-                          label={`Video URL ${index + 1}`}
-                          value={url}
-                          onChange={(e) => {
-                            const updatedUrls = videoUrls.split(",");
-                            updatedUrls[index] = e.target.value;
-                            setVideoUrls(updatedUrls.join(","));
+                    {videoUrls &&
+                      videoUrls.split(",").map((url, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            gap: "16px",
                           }}
-                          placeholder={url || "Enter Video URL"}
-                          style={{ marginRight: "8px", flex: 1 }}
-                        />
-                        <ClearIcon
-                          style={{ color: "#757575", cursor: "pointer" }}
-                          onClick={() => {
-                            const updatedUrls = videoUrls.split(",");
-                            updatedUrls.splice(index, 1);
-                            setVideoUrls(updatedUrls.join(","));
-                          }}
-                        />
-                      </div>
-                    ))}
+                        >
+                          <TextField
+                            label={`Video URL ${index + 1}`}
+                            value={url}
+                            onChange={(e) => {
+                              const updatedUrls = videoUrls.split(",");
+                              updatedUrls[index] = e.target.value;
+                              setVideoUrls(updatedUrls.join(","));
+                            }}
+                            placeholder={url || "Enter Video URL"}
+                            style={{ marginRight: "8px", flex: 1 }}
+                          />
+                          <ClearIcon
+                            style={{ color: "#757575", cursor: "pointer" }}
+                            onClick={() => {
+                              const updatedUrls = videoUrls.split(",");
+                              updatedUrls.splice(index, 1);
+                              setVideoUrls(updatedUrls.join(","));
+                            }}
+                          />
+                        </div>
+                      ))}
                     <Button
                       color="primary"
                       variant="contained"
@@ -321,7 +324,7 @@ const ManageCourses = () => {
                     <div style={{ display: "flex", alignItems: "center" }}>
                       <TextField
                         label="Attachment"
-                        value={attachmentName || ""}
+                        value={attachmentUrl || ""}
                         InputProps={{
                           readOnly: true,
                         }}

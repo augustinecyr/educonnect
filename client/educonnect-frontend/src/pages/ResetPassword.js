@@ -35,7 +35,7 @@ function ResetPassword() {
       setTimeout(() => {
         setOpenSnackbar(false);
         navigate("/login");
-      }, 3000); // Navigate to login after 3 seconds
+      }, 3000); 
     } catch (error) {
       console.error("Forgot password request failed:", error.message);
       setErrorMessage("Failed to send email. Please try again.");
@@ -135,10 +135,10 @@ function ResetPassword() {
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
         message={successMessage || errorMessage}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }} // Snackbar appears at the top right corner
+        anchorOrigin={{ vertical: "top", horizontal: "right" }} 
         ContentProps={{
           sx: {
-            backgroundColor: successMessage ? "#4caf50" : "#f44336", // Change background color based on success or error message
+            backgroundColor: successMessage ? "#4caf50" : "#f44336", 
           },
         }}
       />
