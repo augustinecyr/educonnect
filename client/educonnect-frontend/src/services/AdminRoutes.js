@@ -1,10 +1,11 @@
 import { Outlet } from "react-router-dom";
 import { Alert } from "@mui/material";
-import authServiceInstance from "../services/AuthService";
+import authServiceInstance from "./AuthService";
 
-const PrivateRoutes = () => {
+const AdminRoutes = () => {
   const isAuthenticated = authServiceInstance.isAuthenticated();
-  const isAuthorized = isAuthenticated;
+  const isAdmin = authServiceInstance.isAdmin();
+  const isAuthorized = isAuthenticated && isAdmin;
 
   if (!isAuthorized) {
     return (
@@ -16,4 +17,4 @@ const PrivateRoutes = () => {
   return <Outlet />;
 };
 
-export default PrivateRoutes;
+export default AdminRoutes;
