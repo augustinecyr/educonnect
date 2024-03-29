@@ -19,6 +19,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import Tooltip from "@mui/material/Tooltip";
 
 const sections = [
   { title: "Courses", url: "/courses" },
@@ -41,15 +42,22 @@ export default function MyCourses() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const courses = await courseServiceInstance.fetchCourses(); // Fetch courses including semester
         const enrollmentList =
           await courseServiceInstance.fetchEnrollmentList();
         const userEnrollments = enrollmentList.filter(
           (enrollment) => enrollment.email === email
         );
-        const userCourseIds = userEnrollments.map(
-          (enrollment) => enrollment.courseId
-        );
-        setUserCourses(userCourseIds);
+        const userCoursesData = userEnrollments.map((enrollment) => {
+          const course = courses.find(
+            (course) => course.courseId === enrollment.courseId
+          );
+          return {
+            courseId: enrollment.courseId,
+            semester: course ? course.semester : "",
+          };
+        });
+        setUserCourses(userCoursesData);
 
         setSnackbarMessage("Enrollment list fetched successfully");
         setSnackbarSeverity("success");
@@ -64,7 +72,6 @@ export default function MyCourses() {
 
     fetchData();
   }, [email]);
-
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
@@ -87,17 +94,21 @@ export default function MyCourses() {
                 <TableHead>
                   <TableRow>
                     <TableCell>Course ID</TableCell>
+                    <TableCell>Semester</TableCell>
                     <TableCell>Status</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {userCourses.map((courseId, index) => (
+                  {userCourses.map((course, index) => (
                     <TableRow key={index}>
-                      <TableCell>{courseId}</TableCell>
+                      <TableCell>{course.courseId}</TableCell>
+                      <TableCell>{course.semester}</TableCell>
                       <TableCell>
-                        <ListItemIcon>
-                          <CheckCircleIcon color="primary" />
-                        </ListItemIcon>
+                        <Tooltip title="Enrolled">
+                          <ListItemIcon>
+                            <CheckCircleIcon color="primary" />
+                          </ListItemIcon>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))}
