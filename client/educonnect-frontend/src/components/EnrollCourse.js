@@ -180,72 +180,82 @@ const EnrollCourse = () => {
             </Grid>
           </Grid>
         )}
-{tabValue === 1 && (
-  <Grid container spacing={4}>
-    <Grid item xs={12}>
-      <Card>
-        <CardContent>
-          <>
-            <Typography gutterBottom variant="h4" component="div">
-              Videos
-            </Typography>
-            {(!enrolled || isAdmin) && (
-              <>
-                {course?.videoUrl && (
-                  <div>
-                    {course.videoUrl.split(",").map((url, index) => (
-                      <div key={index} style={{ marginBottom: "20px" }}>
-                        <iframe
-                          width="100%"
-                          height="600"
-                          src={`https://www.youtube.com/embed/${extractVideoId(
-                            url
-                          )}`}
-                          title={`Video ${index + 1}`}
-                          allowFullScreen
-                        ></iframe>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </>
-        </CardContent>
-      </Card>{" "}
-    </Grid>
-  </Grid>
-)}
-
-{tabValue === 2 && (
-  <Grid container spacing={4}>
-    <Grid item xs={12}>
-      <Card>
-        <CardContent>
-          <>
-            <Typography gutterBottom variant="h4" component="div">
-              Resources
-            </Typography>
-            {(!enrolled || isAdmin) && (
-              <>
-                {course && course.attachmentUrl && (
-                  <div>
-                    <Typography variant="body1">
-                      Filename: {attachmentName || "No file selected"}
+        {tabValue === 1 && (
+          <Grid container spacing={4}>
+            <Grid item xs={12}>
+              <Card>
+                <CardContent>
+                  <>
+                    <Typography gutterBottom variant="h4" component="div">
+                      Videos
                     </Typography>
-                    <Button onClick={handleDownloadPdf}>
-                      Download PDF
-                    </Button>
-                  </div>
-                )}
-              </>
-            )}
-          </>
-        </CardContent>
-      </Card>{" "}
-    </Grid>
-  </Grid>
-)}
+                    {(enrolled || isAdmin) && (
+                      <>
+                        {course?.videoUrl && (
+                          <div>
+                            {course.videoUrl.split(",").map((url, index) => (
+                              <div key={index} style={{ marginBottom: "20px" }}>
+                                <iframe
+                                  width="100%"
+                                  height="600"
+                                  src={`https://www.youtube.com/embed/${extractVideoId(
+                                    url
+                                  )}`}
+                                  title={`Video ${index + 1}`}
+                                  allowFullScreen
+                                ></iframe>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    )}
+                    {!enrolled && !isAdmin && (
+                      <Typography variant="body1">
+                        You need to enroll in the course to access this content.
+                      </Typography>
+                    )}
+                  </>
+                </CardContent>
+              </Card>{" "}
+            </Grid>
+          </Grid>
+        )}
+
+        {tabValue === 2 && (
+          <Grid container spacing={4}>
+            <Grid item xs={12}>
+              <Card>
+                <CardContent>
+                  <>
+                    <Typography gutterBottom variant="h4" component="div">
+                      Resources
+                    </Typography>
+                    {(enrolled || isAdmin) && (
+                      <>
+                        {course && course.attachmentUrl && (
+                          <div>
+                            <Typography variant="body1">
+                              Filename: {attachmentName || "No file selected"}
+                            </Typography>
+                            <Button onClick={handleDownloadPdf}>
+                              Download PDF
+                            </Button>
+                          </div>
+                        )}
+                      </>
+                    )}
+                    {!enrolled && !isAdmin && (
+                      <Typography variant="body1">
+                        You need to enroll in the course to access this content.
+                      </Typography>
+                    )}
+                  </>
+                </CardContent>
+              </Card>{" "}
+            </Grid>
+          </Grid>
+        )}
         <Snackbar
           anchorOrigin={{
             vertical: "top",
