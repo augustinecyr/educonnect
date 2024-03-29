@@ -18,6 +18,8 @@ function Header({ sections, title }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const email = localStorage.getItem("email");
+
   const handleCloseSnackbar = () => {
     setSuccessMessage("");
     setErrorMessage("");
@@ -96,7 +98,18 @@ function Header({ sections, title }) {
                   >
                     My Account
                   </MenuItem>
-                  <MenuItem onClick={handleMenuClose}>My Courses</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      if (email) {
+                        navigate(`/courses/${email}`);
+                      } else {
+                        console.error("Email not available");
+                      }
+                      handleMenuClose();
+                    }}
+                  >
+                    My Courses
+                  </MenuItem>{" "}
                   <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
                   <MenuItem onClick={onLogout}>Logout</MenuItem>
                 </Menu>
