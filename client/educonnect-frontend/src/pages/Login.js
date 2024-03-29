@@ -161,7 +161,6 @@ function Login() {
                   },
                 })}
                 InputProps={{
-                  // Show/hide password icon
                   endAdornment: (
                     <FormControlLabel
                       control={
