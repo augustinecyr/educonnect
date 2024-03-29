@@ -185,30 +185,38 @@ const EnrollCourse = () => {
             <Grid item xs={12}>
               <Card>
                 <CardContent>
-                  <Typography
-                    gutterBottom
-                    variant="h4"
-                    component="div"
-                  ></Typography>
-                  {course?.videoUrl && (
-                    <div>
-                      {course.videoUrl.split(",").map((url, index) => (
-                        <div key={index} style={{ marginBottom: "20px" }}>
-                          <iframe
-                            width="100%"
-                            height="600"
-                            src={`https://www.youtube.com/embed/${extractVideoId(
-                              url
-                            )}`}
-                            title={`Video ${index + 1}`}
-                            allowFullScreen
-                          ></iframe>
+                  {!enrolled ? (
+                    <Typography variant="body1">
+                      You need to enroll in the course to access this content.
+                    </Typography>
+                  ) : (
+                    <>
+                      <Typography
+                        gutterBottom
+                        variant="h4"
+                        component="div"
+                      ></Typography>
+                      {course?.videoUrl && (
+                        <div>
+                          {course.videoUrl.split(",").map((url, index) => (
+                            <div key={index} style={{ marginBottom: "20px" }}>
+                              <iframe
+                                width="100%"
+                                height="600"
+                                src={`https://www.youtube.com/embed/${extractVideoId(
+                                  url
+                                )}`}
+                                title={`Video ${index + 1}`}
+                                allowFullScreen
+                              ></iframe>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  )}{" "}
+                      )}
+                    </>
+                  )}
                 </CardContent>
-              </Card>
+              </Card>{" "}
             </Grid>
           </Grid>
         )}
@@ -217,19 +225,29 @@ const EnrollCourse = () => {
             <Grid item xs={12}>
               <Card>
                 <CardContent>
-                  <Typography gutterBottom variant="h4" component="div">
-                    Resources
-                  </Typography>
-                  {course && course.attachmentUrl && (
-                    <div>
-                      <Typography variant="body1">
-                        Filename: {attachmentName || "No file selected"}
+                  {!enrolled ? (
+                    <Typography variant="body1">
+                      You need to enroll in the course to access this content.
+                    </Typography>
+                  ) : (
+                    <>
+                      <Typography gutterBottom variant="h4" component="div">
+                        Resources
                       </Typography>
-                      <Button onClick={handleDownloadPdf}>Download PDF</Button>
-                    </div>
+                      {course && course.attachmentUrl && (
+                        <div>
+                          <Typography variant="body1">
+                            Filename: {attachmentName || "No file selected"}
+                          </Typography>
+                          <Button onClick={handleDownloadPdf}>
+                            Download PDF
+                          </Button>
+                        </div>
+                      )}
+                    </>
                   )}
                 </CardContent>
-              </Card>
+              </Card>{" "}
             </Grid>
           </Grid>
         )}
