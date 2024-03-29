@@ -31,21 +31,19 @@ class UserService {
       return data;
     } catch (error) {
       console.error("An error occurred during user registration:", error);
-      throw error; // Rethrow the error to be handled by the caller
+      throw error;
     }
   }
 
   async forgotPassword(email) {
-    // Simulate asynchronous behavior (e.g., API request)
     return new Promise((resolve, reject) => {
-      // Simulate success after 1 second
       setTimeout(() => {
-        resolve(); // Resolve without any value
+        resolve();
       }, 1000);
     });
   }
 }
 
-const userServiceInstance = new UserService(); // Create an instance of UserService
+const userServiceInstance = new UserService(); 
 
-export default userServiceInstance; // Export the instance as the default module
+export default userServiceInstance; 

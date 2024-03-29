@@ -23,7 +23,7 @@ import Tooltip from "@mui/material/Tooltip";
 
 const sections = [
   { title: "Courses", url: "/courses" },
-  { title: "Analytics", url: "#" },
+  { title: "Analytics", url: "/analytics" },
   { title: "Resources", url: "#" },
   { title: "Profile", url: "#" },
 ];
