@@ -10,11 +10,12 @@ import analyticsServiceInstance from "../services/AnalyticsService";
 import Snackbar from "@mui/material/Snackbar";
 import SnackbarContent from "@mui/material/SnackbarContent";
 import Typography from "@mui/material/Typography";
+import BarChart from "../components/BarChart";
+import DonutChart from "../components/DonutChart";
 
 const sections = [
   { title: "Courses", url: "/courses" },
   { title: "Analytics", url: "/analytics" },
-  { title: "Resources", url: "#" },
   { title: "Profile", url: "#" },
 ];
 
@@ -29,22 +30,49 @@ export default function Analytics() {
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [totalCourses, setTotalCourses] = useState(0);
   const [totalEnrolledUsers, setTotalEnrolledUsers] = useState(0);
-  const [coursesByEmail, setCoursesByEmail] = useState(0); // State to hold enrolled courses by email
+  const [coursesByEmail, setCoursesByEmail] = useState(0);
+  const [barChartData, setBarChartData] = useState([]);
+  const [donutChartData, setDonutChartData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const totalCoursesData =
-          await analyticsServiceInstance.getTotalCourses();
-        setTotalCourses(totalCoursesData.totalCount);
+        if (email) {
+          const totalCoursesData =
+            await analyticsServiceInstance.getTotalCourses();
+          setTotalCourses(totalCoursesData.totalCount);
 
-        const totalEnrolledUsersData =
-          await analyticsServiceInstance.getTotalEnrolledUsers();
-        setTotalEnrolledUsers(totalEnrolledUsersData.totalUsers);
+          const totalEnrolledUsersData =
+            await analyticsServiceInstance.getTotalEnrolledUsers();
+          setTotalEnrolledUsers(totalEnrolledUsersData.totalUsers);
 
-        const coursesByEmailData =
-          await analyticsServiceInstance.getEnrolledCoursesByEmail(email);
-        setCoursesByEmail(coursesByEmailData.courseCount);
+          const coursesByEmailData =
+            await analyticsServiceInstance.getEnrolledCoursesByEmail(email);
+          setCoursesByEmail(coursesByEmailData.courseCount);
+        }
+
+        const barChartData = [
+          { year: 2020, count: 13813 },
+          { year: 2021, count: 18032 },
+          { year: 2022, count: 24088 },
+          { year: 2023, count: 39521 },
+          { year: 2024, count: 50000 },
+        ];
+        setBarChartData(barChartData);
+
+        const donutChartData = {
+          labels: ["Total Courses Available", "Courses Enrolled"],
+          datasets: [
+            {
+              label: "Total",
+              data: [totalCourses, coursesByEmail],
+              backgroundColor: ["rgb(251, 188, 5)", "rgb(52, 168, 83)"],
+              hoverOffset: 4,
+            },
+          ],
+        };
+        setDonutChartData(donutChartData);
+        
       } catch (error) {
         handleFetchError(error, "data");
       }
@@ -53,7 +81,7 @@ export default function Analytics() {
     fetchData();
 
     return () => {};
-  }, [email]);
+  }, [email, totalCourses, totalEnrolledUsers, coursesByEmail]);
 
   const handleFetchError = (error, context) => {
     console.error(`Error fetching data for ${context}:`, error);
@@ -71,12 +99,40 @@ export default function Analytics() {
       <CssBaseline />
       <Header title={""} sections={sections} />
       <Container>
-        <Container>
-          <Typography>Total Courses: {totalCourses}</Typography>
-          <Typography>Total Enrolled Users: {totalEnrolledUsers}</Typography>
-          <Typography>
-            Total Enrolled Courses by Email: {coursesByEmail}
-          </Typography>
+        <br></br>
+        <Typography variant="h4" gutterBottom>
+          Analytics Overview
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Here's a breakdown of important analytics on EduConnect.
+        </Typography>
+        <Container
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "20px",
+          }}
+        >
+          <div style={{ marginRight: "20px" }}>
+            <Typography variant="h6">Course Enrollment Trends</Typography>
+            <BarChart data={barChartData} />
+            <Typography variant="body2">
+              This chart illustrates the upward trend in course enrollments over
+              the years, particularly accentuated during and post the pandemic.
+              It reflects the surge in website traffic as remote learning became
+              prevalent, emphasizing the growing significance of online
+              platforms for education.
+            </Typography>
+          </div>
+          {!isAdmin && (
+            <div style={{ flex: 1 }}>
+              <Typography variant="h6">
+                Your Learning Journey Overview
+              </Typography>
+              <DonutChart data={donutChartData} />
+            </div>
+          )}
         </Container>
       </Container>
       <Footer />

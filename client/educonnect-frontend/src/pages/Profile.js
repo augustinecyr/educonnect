@@ -24,11 +24,11 @@ import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
 import SnackbarContent from "@mui/material/SnackbarContent";
 import { useNavigate } from "react-router-dom";
+import RadarChart from "../components/RadarChart";
 
 const sections = [
   { title: "Courses", url: "/courses" },
   { title: "Analytics", url: "/analytics" },
-  { title: "Resources", url: "#" },
   { title: "Profile", url: "#" },
 ];
 
@@ -39,7 +39,6 @@ export default function Profile() {
   console.log("User has a valid token:", isAuthenticated);
   console.log("User is an Admin", isAdmin);
   const email = localStorage.getItem("email");
-
   const [profileInfo, setProfileInfo] = useState(null);
   const [isEditing, setIsEditing] = useState({
     name: false,
@@ -59,6 +58,7 @@ export default function Profile() {
     email: true,
   });
   const [formChanged, setFormChanged] = useState(false);
+  const [radarChartData, setRadarChartData] = useState([]);
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -72,6 +72,53 @@ export default function Profile() {
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const radarChartData = {
+          labels: [
+            "Eating",
+            "Drinking",
+            "Sleeping",
+            "Designing",
+            "Coding",
+            "Cycling",
+            "Running",
+          ],
+          datasets: [
+            {
+              label: "My First Dataset",
+              data: [65, 59, 90, 81, 56, 55, 40],
+              fill: true,
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor: "rgb(255, 99, 132)",
+              pointBackgroundColor: "rgb(255, 99, 132)",
+              pointBorderColor: "#fff",
+              pointHoverBackgroundColor: "#fff",
+              pointHoverBorderColor: "rgb(255, 99, 132)",
+            },
+            {
+              label: "My Second Dataset",
+              data: [28, 48, 40, 19, 96, 27, 100],
+              fill: true,
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              borderColor: "rgb(54, 162, 235)",
+              pointBackgroundColor: "rgb(54, 162, 235)",
+              pointBorderColor: "#fff",
+              pointHoverBackgroundColor: "#fff",
+              pointHoverBorderColor: "rgb(54, 162, 235)",
+            },
+          ],
+        };
+        setRadarChartData(radarChartData);
+      } catch (error) {}
+    };
+
+    fetchData();
+
+    return () => {};
+  }, []);
 
   useEffect(() => {
     async function fetchProfileInfo() {
@@ -141,7 +188,7 @@ export default function Profile() {
         <main style={{ textAlign: "center" }}>
           <Grid container spacing={3} justifyContent="center">
             <Grid item xs={12} md={8}>
-              <Typography variant="h4">Profile Information</Typography>
+              <Typography variant="h5">Profile Information</Typography>
               {profileInfo && (
                 <div>
                   <List>
@@ -187,10 +234,7 @@ export default function Profile() {
                         value={profileInfo.occupation}
                         onChange={(e) => {
                           handleChange("occupation", e.target.value);
-                          handleFieldValidation(
-                            "occupation",
-                            e.target.value
-                          );
+                          handleFieldValidation("occupation", e.target.value);
                         }}
                         fullWidth
                         variant="outlined"
@@ -238,18 +282,26 @@ export default function Profile() {
                     </ListItem>
                   </List>
                   <Button
-      variant="contained"
-      onClick={handleUpdate}
-      disabled={
-        !formChanged ||
-        !isFormValid() ||
-        !Object.values(isEditing).some((editing) => editing)
-      }
-    >
-      Update
-    </Button>                </div>
+                    variant="contained"
+                    onClick={handleUpdate}
+                    disabled={
+                      !formChanged ||
+                      !isFormValid() ||
+                      !Object.values(isEditing).some((editing) => editing)
+                    }
+                  >
+                    Update
+                  </Button>{" "}
+                </div>
               )}
             </Grid>
+            
+          {!isAdmin && (
+            <Grid item xs={12} md={4}>
+              <Typography variant="h5">My Learning Profile</Typography>
+              <RadarChart data={radarChartData} />
+            </Grid>
+             )}
           </Grid>
           <Snackbar
             anchorOrigin={{

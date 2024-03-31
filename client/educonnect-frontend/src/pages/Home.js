@@ -18,7 +18,6 @@ import technologyineducation from "../images/technology-in-education.jpg";
 const sections = [
   { title: "Courses", url: "/courses" },
   { title: "Analytics", url: "/analytics" },
-  { title: "Resources", url: "#" },
   { title: "Profile", url: "#" },
 ];
 

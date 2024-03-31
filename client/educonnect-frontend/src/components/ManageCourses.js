@@ -39,7 +39,6 @@ import {} from "@mui/icons-material";
 const sections = [
   { title: "Courses", url: "/courses" },
   { title: "Analytics", url: "#" },
-  { title: "Resources", url: "#" },
   { title: "Profile", url: "#" },
 ];
 

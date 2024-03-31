@@ -24,7 +24,6 @@ import authServiceInstance from "../services/AuthService";
 const sections = [
   { title: "Courses", url: "/courses" },
   { title: "Analytics", url: "/analytics" },
-  { title: "Resources", url: "#" },
   { title: "Profile", url: "#" },
 ];
 

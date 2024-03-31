@@ -152,3 +152,14 @@ exports.getEnrollmentList = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+exports.getAllCourseIds = async (req, res) => {
+  try {
+    const courseIds = await Course.findAll({ attributes: ['courseId'] });
+    res.status(200).json(courseIds);
+    console.log("courseIds:", courseIds);
+  } catch (error) {
+    console.error("Error retrieving courseIds:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

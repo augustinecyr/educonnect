@@ -86,6 +86,16 @@ class CourseService {
       throw error;
     }
   }
+
+  async fetchCourseIds() {
+    try {
+      const response = await axios.get(`${API_URL}/courseIds`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+      throw error;
+    }
+  }
 }
 
 const courseServiceInstance = new CourseService();
