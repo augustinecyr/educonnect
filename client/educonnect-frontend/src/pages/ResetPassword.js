@@ -8,18 +8,19 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+import Snackbar from "@mui/material/Snackbar";
 import { ThemeProvider } from "@mui/material/styles";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import theme from "../themes/Theme";
 import loginpage from "../images/login-page.jpg";
 import EmailIcon from "@mui/icons-material/Email";
-import userServiceInstance from "../services/UserService";
 
-function ForgotPassword() {
+function ResetPassword() {
   const navigate = useNavigate();
-  const [emailSent, setEmailSent] = useState(false);
-  const [email, setEmail] = useState(""); // State variable for storing email input
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const {
     register,
@@ -29,13 +30,23 @@ function ForgotPassword() {
 
   const onSubmit = async (data) => {
     try {
-      const { email } = data;
-      setEmailSent(true);
-      await userServiceInstance.forgotPassword(email);
+      setOpenSnackbar(true);
+      setSuccessMessage("Email sent successfully!");
+      setTimeout(() => {
+        setOpenSnackbar(false);
+        navigate("/login");
+      }, 3000); 
     } catch (error) {
       console.error("Forgot password request failed:", error.message);
-      // Handle error (e.g., display error message)
+      setErrorMessage("Failed to send email. Please try again.");
+      setOpenSnackbar(true);
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+    setSuccessMessage("");
+    setErrorMessage("");
   };
 
   return (
@@ -99,8 +110,6 @@ function ForgotPassword() {
                     message: "Invalid email address",
                   },
                 })}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
               />
               <Button
                 type="submit"
@@ -121,8 +130,20 @@ function ForgotPassword() {
           </Box>
         </Grid>
       </Grid>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={successMessage || errorMessage}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }} 
+        ContentProps={{
+          sx: {
+            backgroundColor: successMessage ? "#4caf50" : "#f44336", 
+          },
+        }}
+      />
     </ThemeProvider>
   );
 }
 
-export default ForgotPassword;
+export default ResetPassword;

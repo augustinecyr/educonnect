@@ -8,72 +8,75 @@ import Footer from "../components/Footer";
 import theme from "../themes/Theme";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
-import authServiceInstance from "../services/AuthService"; // Import AuthService
+import authServiceInstance from "../services/AuthService";
+import { useNavigate } from "react-router-dom";
+import courseServiceInstance from "../services/CourseService";
+import { useState, useEffect } from "react";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import coursebanner1 from "../images/coursebanner1.jpg";
+import coursebanner2 from "../images/coursebanner2.jpg";
+import coursebanner3 from "../images/coursebanner3.jpg";
+import coursebanner4 from "../images/coursebanner4.jpg";
+
+import "../index.css";
 
 const sections = [
   { title: "Courses", url: "/courses" },
-  { title: "Analytics", url: "#" },
-  { title: "Resources", url: "#" },
+  { title: "Analytics", url: "/analytics" },
   { title: "Profile", url: "#" },
 ];
 
-// Define courses for each semester
-const semesterCourses = {
-  T12024: [
-    {
-      title: "Course 1",
-      description: "Description of Course 1",
-      image: "https://via.placeholder.com/150", // Example image URL
-      rating: 4.5, // Example rating
-      enrolled: 1234, // Example number of students enrolled
-      hours: 20, // Example total hours
-    },
-    // Add more courses for T12024 semester as needed
-  ],
-  T22024: [
-    {
-      title: "Course 4",
-      description: "Description of Course 4",
-      image: "https://via.placeholder.com/150", // Example image URL
-      rating: 4.2, // Example rating
-      enrolled: 3456, // Example number of students enrolled
-      hours: 25, // Example total hours
-    },
-    // Add more courses for T22024 semester as needed
-  ],
-  T32024: [
-    {
-      title: "Course 7",
-      description: "Description of Course 7",
-      image: "https://via.placeholder.com/150", // Example image URL
-      rating: 4.0, // Example rating
-      enrolled: 6789, // Example number of students enrolled
-      hours: 30, // Example total hours
-    },
-    // Add more courses for T32024 semester as needed
-  ],
-};
+const semesterCourses = {};
 
 export default function Home() {
+  const navigate = useNavigate();
   const isAuthenticated = authServiceInstance.isAuthenticated();
-  const [isAdmin, setIsAdmin] = React.useState(false); // Initialize isAdmin state
+  const [isAdmin, setIsAdmin] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
+  const [courses, setCourses] = useState([]);
+  const [semester, setSemester] = useState("");
+  // eslint-disable-next-line no-unused-vars
+  const [currentCourses, setCurrentCourses] = useState([]);
+
+  const [carouselImages, setCarouselImages] = useState([
+    coursebanner1,
+    coursebanner2,
+    coursebanner3,
+    coursebanner4,
+  ]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      setCarouselImages([]);
+    }
+  }, [isAdmin]);
 
   React.useEffect(() => {
-    // Update isAdmin state when component mounts or isAuthenticated changes
     setIsAdmin(authServiceInstance.isAdmin("admin@educonnect.sg"));
+    setLoading(false);
+    fetchCoursesData();
   }, [isAuthenticated]);
 
-  const [semester, setSemester] = React.useState("T12024");
-  const [currentCourses, setCurrentCourses] = React.useState(
-    semesterCourses["T12024"]
-  );
+  const fetchCoursesData = async () => {
+    try {
+      const coursesData = await courseServiceInstance.fetchCourses();
+      setCourses(coursesData);
+      if (coursesData.length > 0) {
+        const firstSemester = coursesData[0].semester;
+        setSemester(firstSemester);
+        setCurrentCourses(semesterCourses[firstSemester]);
+      }
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+    }
+  };
 
   const handleSemesterChange = (event) => {
     const selectedSemester = event.target.value;
@@ -81,13 +84,49 @@ export default function Home() {
     setCurrentCourses(semesterCourses[selectedSemester]);
   };
 
+  if (loading) {
+    return null;
+  }
+
+  const handleManageClick = (course) => {
+    navigate(`/courses/manage`, { state: { course } });
+  };
+  const handleFindOutMoreClick = (course) => {
+    navigate(`/courses/enroll/${course.courseId}`, {
+      state: { courseId: course.courseId },
+    });
+  };
+
+  const handlePreviewClick = (course) => {
+    navigate(`/courses/preview/${course.courseId}`, {
+      state: { courseId: course.courseId },
+    });
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <Header title={""} sections={sections} />
       <Container maxWidth="lg">
-        <Header title={""} sections={sections} />
-        <br />
         <main>
+          {!isAdmin && (
+            <Carousel
+              autoPlay={true}
+              interval={5000}
+              infiniteLoop={true}
+              showThumbs={false} // Hide the thumbnails
+            >
+              {carouselImages.map((image, index) => (
+                <div key={index} className="carousel-item">
+                  <img src={image} alt={`Carousel ${index + 1}`} />
+                  <div className="carousel-typography">
+                    <Typography variant="h6">Title</Typography>
+                    <Typography variant="body1">Description</Typography>
+                  </div>
+                </div>
+              ))}
+            </Carousel>
+          )}
           <FormControl sx={{ m: 1, minWidth: 100 }}>
             <Select
               labelId="semester-label"
@@ -95,68 +134,70 @@ export default function Home() {
               value={semester}
               onChange={handleSemesterChange}
             >
-              <MenuItem value="T12024">T12024</MenuItem>
-              <MenuItem value="T22024">T22024</MenuItem>
-              <MenuItem value="T32024">T32024</MenuItem>
+              {Array.from(
+                new Set(courses.map((course) => course.semester))
+              ).map((semesterOption) => (
+                <MenuItem key={semesterOption} value={semesterOption}>
+                  {semesterOption}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
 
           <Grid container spacing={4}>
-            {currentCourses.map((course, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Tooltip
-                  title={
-                    <>
-                      <Typography variant="body1">{course.title}</Typography>
-                      <Typography variant="body1" color="white">
-                        Description: {course.description}
-                      </Typography>
-                      <Typography variant="body2" color="white">
-                        Total Hours: {course.hours}
-                      </Typography>
-                      <Typography variant="body2" color="white">
-                        Rating: {course.rating}
-                      </Typography>
-                      <Typography variant="body2" color="white">
-                        Students Enrolled: {course.enrolled}
-                      </Typography>
-                    </>
-                  }
-                  placement="right"
-                >
-                  <Card>
-                    <CardMedia
-                      component="img"
-                      height="140"
-                      image={course.image}
-                      alt={course.title}
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="div">
-                        {course.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Rating: {course.rating}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Students Enrolled: {course.enrolled}
-                      </Typography>
-                      <br />
-                      {/* Conditional rendering of button based on isAdmin */}
-                      {isAdmin ? (
-                        <Button variant="contained" color="secondary">
-                          Manage
-                        </Button>
-                      ) : (
-                        <Button variant="contained" color="primary">
-                          Enroll Now
-                        </Button>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Tooltip>
-              </Grid>
-            ))}
+            {courses
+              .filter((course) => course.semester === semester)
+              .map((course, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <Tooltip
+                    title={
+                      <>
+                        <Typography variant="body1">{course.title}</Typography>
+                        <Typography variant="body1" color="white">
+                          Description: {course.description}
+                        </Typography>
+                      </>
+                    }
+                    placement="right"
+                  >
+                    <Card>
+                      <CardContent>
+                        <Typography gutterBottom variant="h5" component="div">
+                          {course.title}
+                        </Typography>
+                        <br />
+                        {isAdmin ? (
+                          <div>
+                            <Button
+                              variant="contained"
+                              color="secondary"
+                              onClick={() => handleManageClick(course)}
+                              sx={{ marginRight: 1 }}
+                            >
+                              Manage
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => handlePreviewClick(course)}
+                            >
+                              Preview
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handleFindOutMoreClick(course)}
+                          >
+                            Find Out More..
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </Tooltip>
+                </Grid>
+              ))}
           </Grid>
         </main>
       </Container>

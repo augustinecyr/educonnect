@@ -1,5 +1,12 @@
 class UserService {
-  async registerUser(name, company, occupation, mobile_number, email, password) {
+  async registerUser(
+    name,
+    company,
+    occupation,
+    mobile_number,
+    email,
+    password
+  ) {
     const REGISTER_USER_API_URL = "http://localhost:3001/api/users/register";
     try {
       const response = await fetch(REGISTER_USER_API_URL, {
@@ -24,11 +31,19 @@ class UserService {
       return data;
     } catch (error) {
       console.error("An error occurred during user registration:", error);
-      throw error; // Rethrow the error to be handled by the caller
+      throw error;
     }
+  }
+
+  async forgotPassword(email) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, 1000);
+    });
   }
 }
 
-const userServiceInstance = new UserService(); // Create an instance of UserService
+const userServiceInstance = new UserService(); 
 
-export default userServiceInstance; // Export the instance as the default module
+export default userServiceInstance; 

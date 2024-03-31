@@ -9,43 +9,35 @@ class AuthService {
         },
         body: JSON.stringify({ email, password }),
       });
-      //console.log("email:", email);
-    //  console.log("password:", password);
-    //  console.log("Received response from server:", response);
 
       if (!response.ok) {
         throw new Error("Login failed");
       }
       const data = await response.json();
-   //   console.log("Login successful. Received data:", data);
-      // Store authentication token in local storage
+
       localStorage.setItem("email", email);
       localStorage.setItem("token", data.token);
       console.log(data.token);
       return data;
     } catch (error) {
       console.error("An error occurred during login:", error);
-      throw error; // Rethrow the error to be handled by the caller
+      throw error;
     }
   }
 
   logout() {
-    // Clear authentication token from local storage
     localStorage.removeItem("token");
     localStorage.removeItem("email");
   }
 
   isAuthenticated() {
-    // Check if authentication token exists in local storage
     return localStorage.getItem("token") !== null;
   }
-  
+
   isAdmin(email) {
-     email = localStorage.getItem("email");
-    // Check if the user email is admin@educonnect.sg
+    email = localStorage.getItem("email");
     return email === "admin@educonnect.sg";
   }
 }
-const authServiceInstance = new AuthService(); // Create an instance of AuthService
-
-export default authServiceInstance; // Export the instance as the default module
+const authServiceInstance = new AuthService();
+export default authServiceInstance;
