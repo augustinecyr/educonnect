@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../index");
 
-// Define the user model
 const EduconnectUser = sequelize.define("educonnect_users", {
   name: {
     type: DataTypes.STRING,

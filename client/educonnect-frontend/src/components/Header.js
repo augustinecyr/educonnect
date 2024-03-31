@@ -1,19 +1,29 @@
-import * as React from "react";
-import Toolbar from "@mui/material/Toolbar";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
+import React, { useState } from "react";
+import {
+  Toolbar,
+  Typography,
+  Link,
+  Button,
+  Menu,
+  MenuItem,
+  Snackbar,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import logo from "../images/educonnect.jpg";
 import "../index.css";
 import authServiceInstance from "../services/AuthService";
-import { useNavigate } from "react-router-dom";
 
-function Header(props) {
-  const { sections, title } = props;
+function Header({ sections, title }) {
   const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const email = localStorage.getItem("email");
+
+  const handleCloseSnackbar = () => {
+    setSuccessMessage("");
+    setErrorMessage("");
+  };
 
   const handleProfileClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -25,53 +35,43 @@ function Header(props) {
 
   const onLogout = async () => {
     try {
-      // Call the logout method of AuthService
-      await authServiceInstance.logout();
-      // Redirect to login page or any other desired location
+      authServiceInstance.logout();
+      setSuccessMessage("Logout successfully!");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       navigate("/login");
     } catch (error) {
+      setErrorMessage("Failed to logout!");
       console.error("Logout has failed:", error.message);
-      // Handle logout error (e.g., display error message)
     }
   };
 
   return (
-    <React.Fragment>
-      <Toolbar sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Link href="http://localhost:3000/home" className="logo-link">
-          <img
-            src={logo}
-            alt="EduConnect Logo"
-            style={{ width: "50px", height: "auto" }}
-          />
-        </Link>
-        <Typography
-          component="h2"
-          variant="h5"
-          color="inherit"
-          align="center"
-          noWrap
-          sx={{ flex: 1 }}
-        >
-          {title}
-        </Typography>
-      </Toolbar>
-      <Toolbar
-        component="nav"
-        variant="dense"
-        sx={{
-          justifyContent: "space-between",
-          overflowX: "auto",
-          "& .section-link": {
-            textDecoration: "none",
-            color: "inherit",
-            transition: "color 0.3s ease",
-            "&:hover": {
-              color: "#007bff",
-            },
-          },
-        }}
+    <Toolbar
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        borderBottom: 1,
+        borderColor: "divider",
+      }}
+    >
+      <Link href="http://localhost:3000/home" className="logo-link">
+        <img
+          src={logo}
+          alt="EduConnect Logo"
+          style={{ width: "50px", height: "auto" }}
+        />
+      </Link>
+      <Typography
+        component="h2"
+        variant="h5"
+        color="inherit"
+        align="center"
+        noWrap
+        sx={{ flex: 1 }}
       >
+        {title}
+      </Typography>
+      <div>
         {sections.map((section, index) => (
           <React.Fragment key={index}>
             {section.title === "Profile" ? (
@@ -90,8 +90,26 @@ function Header(props) {
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                 >
-                  <MenuItem onClick={handleMenuClose}>My Account</MenuItem>
-                  <MenuItem onClick={handleMenuClose}>Courses</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/profile");
+                      handleMenuClose();
+                    }}
+                  >
+                    My Account
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      if (email) {
+                        navigate(`/courses/${email}`);
+                      } else {
+                        console.error("Email not available");
+                      }
+                      handleMenuClose();
+                    }}
+                  >
+                    My Courses
+                  </MenuItem>{" "}
                   <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
                   <MenuItem onClick={onLogout}>Logout</MenuItem>
                 </Menu>
@@ -103,19 +121,27 @@ function Header(props) {
                 variant="body2"
                 href={section.url}
                 className="section-link"
-                sx={{
-                  p: 1,
-                  flexShrink: 0,
-                  transition: "transform 0.3s ease",
-                }}
+                sx={{ p: 1, flexShrink: 0, textDecoration: "none" }}
               >
                 {section.title}
               </Link>
             )}
           </React.Fragment>
         ))}
-      </Toolbar>
-    </React.Fragment>
+      </div>
+      <Snackbar
+        open={!!successMessage || !!errorMessage}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={successMessage || errorMessage}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }} // Snackbar appears at the top right corner
+        ContentProps={{
+          sx: {
+            backgroundColor: successMessage ? "#4caf50" : "#f44336", // Change background color based on success or error message
+          },
+        }}
+      />
+    </Toolbar>
   );
 }
 

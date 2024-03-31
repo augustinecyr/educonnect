@@ -1,13 +1,10 @@
 .logo-link img {
   transition: transform 0.3s ease;
-
 }
 
 .logo-link img:hover {
   transform: rotate(10deg) scale(1.1);
 }
-
-
 
 .section-link {
   text-decoration: none;
@@ -16,7 +13,7 @@
 }
 
 .section-link:hover {
-  color: #007bff; /* Change to your desired hover color */
+  color: #007bff;
   animation: bounce 1s;
 }
 
@@ -25,5 +22,31 @@
   border-radius: 10px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
   padding: 10px;
-  max-width: 300px; /* Adjust the maximum width as needed */
+  max-width: 300px;
+}
+
+.featured-post-card {
+  height: 300px;
+}
+
+.carousel-item {
+  max-width: 1340px;
+  max-height: 400px;
+  margin: auto;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.carousel-typography {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px;
 }

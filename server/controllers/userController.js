@@ -1,4 +1,5 @@
-const User = require("../models/User"); // Assuming you have a User model defined
+const User = require("../models/User");
+const EduconnectUser = require("../models/User");
 const mysql = require("mysql");
 
 const pool = mysql.createPool({
@@ -9,7 +10,6 @@ const pool = mysql.createPool({
   port: process.env.DB_PORT,
 });
 
-// Controller function to create a new user
 exports.createUser = async (req, res) => {
   const {
     name,
@@ -38,7 +38,6 @@ exports.createUser = async (req, res) => {
     password: EduconnectUserData.password,
   };
 
-  // Check if the email already exists
   const checkEmailQuery = `SELECT COUNT(*) AS count FROM users WHERE email = ?`;
 
   pool.query(checkEmailQuery, [DbUserData.email], (err, result) => {
@@ -54,7 +53,6 @@ exports.createUser = async (req, res) => {
       return;
     }
 
-    // Email does not exist, proceed with insertion
     const insertQuery = `INSERT INTO users (email, password) VALUES (?, ?)`;
 
     pool.query(
@@ -73,7 +71,6 @@ exports.createUser = async (req, res) => {
     );
   });
 
-  // Check if the email already exists in the "users" table
   const existingUser = await User.findOne({ where: { email } });
   if (existingUser) {
     console.log("Existing user found:", email);
@@ -82,7 +79,6 @@ exports.createUser = async (req, res) => {
       .json({ message: "This email has already been used." });
   }
 
-  // Call the createUser function on the User model
   User.create(EduconnectUserData, async (error, result) => {
     try {
       if (error) {
@@ -95,4 +91,42 @@ exports.createUser = async (req, res) => {
       return res.status(500).json({ message: error.message });
     }
   });
+};
+
+exports.getUserByEmail = async (req, res) => {
+  const { email } = req.params;
+
+  try {
+    const user = await EduconnectUser.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+exports.editUserByEmail = async (req, res) => {
+  const { email } = req.params;
+  const updatedUserInfo = req.body;
+
+  try {
+    const user = await EduconnectUser.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await EduconnectUser.update(updatedUserInfo, { where: { email } });
+
+    const updatedUser = await EduconnectUser.findOne({ where: { email } });
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };

@@ -5,7 +5,6 @@ const { sign } = require("jsonwebtoken");
 const { verify } = require("jsonwebtoken");
 require("dotenv").config();
 
-// Create a MySQL connection pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -14,7 +13,6 @@ const pool = mysql.createPool({
   port: process.env.DB_PORT,
 });
 
-// Login a user
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -27,7 +25,6 @@ exports.loginUser = async (req, res) => {
 
   req.body.password = await bcrypt.hash(req.body.password, 10);
 
-  // Execute the query using the connection pool
   pool.query(query, params, (error, results) => {
     if (error) {
       return res.status(500).json({ message: error.message });
@@ -39,17 +36,14 @@ exports.loginUser = async (req, res) => {
         .json({ message: "Invalid user credentials provided." });
     }
     const timestamp = new Date();
-    // format function
     const formattedTimestamp = format(timestamp, "dd:MM:yyyy HH:mm:ss");
-    // Passwords match
-    // Generate token for the authenticated user
     const accessToken = sign(EduconnectUser, process.env.APP_SECRET, {
       expiresIn: process.env.TOKEN_EXPIRES_IN,
     });
 
     res.status(200).json({
       message: `Authenticated user with the email: ${email} has logged onto the system at ${formattedTimestamp}`,
-      token: accessToken, // Include the generated token in the response
+      token: accessToken,
     });
   });
 };

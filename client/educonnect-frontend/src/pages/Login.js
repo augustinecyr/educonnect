@@ -14,10 +14,10 @@ import { ThemeProvider } from "@mui/material/styles";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import theme from "../themes/Theme";
-import authServiceInstance from "../services/AuthService"; // Import your AuthService
-import Visibility from "@mui/icons-material/Visibility"; // Import visibility icon
-import VisibilityOff from "@mui/icons-material/VisibilityOff"; // Import visibility off icon
-import { Dialog, DialogTitle, DialogContent } from "@mui/material"; // Import necessary components for pop-up box
+import authServiceInstance from "../services/AuthService";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { Snackbar } from "@mui/material";
 import loginpage from "../images/login-page.jpg";
 import PersonIcon from "@mui/icons-material/Person";
 
@@ -42,8 +42,13 @@ function Copyright(props) {
 function Login() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false); // State variable for password visibility
-  const [open, setOpen] = useState(false); // State variable for controlling the visibility of the pop-up box
-  const [success, setSuccess] = useState(false); // State variable for indicating whether registration was successful
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleCloseSnackbar = () => {
+    setSuccessMessage("");
+    setErrorMessage("");
+  };
 
   const {
     register,
@@ -54,24 +59,13 @@ function Login() {
   const onSubmit = async (data) => {
     try {
       const { email, password } = data;
-      // Call the login method of AuthService
       await authServiceInstance.login(email, password);
-      setSuccess(true);
-      setOpen(true);
-      await new Promise((resolve) => setTimeout(resolve, 2500));
-      // If login successful, redirect to home page
+      setSuccessMessage("Login successful!");
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       navigate("/home");
     } catch (error) {
+      setErrorMessage("Failed to login!");
       console.error("Login has failed:", error.message);
-      setOpen(true);
-      setSuccess(false);
-    }
-  };
-
-  const handleClose = () => {
-    setOpen(false); // Close the pop-up box
-    if (success) {
-      navigate("/home"); // If registration was successful, navigate to login page
     }
   };
 
@@ -167,7 +161,6 @@ function Login() {
                   },
                 })}
                 InputProps={{
-                  // Show/hide password icon
                   endAdornment: (
                     <FormControlLabel
                       control={
@@ -206,27 +199,19 @@ function Login() {
             </Box>
           </Box>
         </Grid>
-        <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>
-            {success ? (
-              <Typography variant="h6" color="primary">
-                Successful Login
-              </Typography>
-            ) : (
-              <Typography variant="h6" color="error">
-                Error
-              </Typography>
-            )}
-          </DialogTitle>
-          <DialogContent>
-            <Typography variant="body1">
-              {success
-                ? "Welcome! You are now logged in."
-                : "Oops! It seems there was an error during the login process. Please try again later."}
-            </Typography>
-          </DialogContent>
-        </Dialog>
       </Grid>
+      <Snackbar
+        open={!!successMessage || !!errorMessage}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={successMessage || errorMessage}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }} // Snackbar appears at the top right corner
+        ContentProps={{
+          sx: {
+            backgroundColor: successMessage ? "#4caf50" : "#f44336", // Change background color based on success or error message
+          },
+        }}
+      />
     </ThemeProvider>
   );
 }
