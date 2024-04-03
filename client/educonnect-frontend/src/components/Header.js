@@ -15,6 +15,7 @@ import authServiceInstance from "../services/AuthService";
 
 function Header({ sections, title }) {
   const navigate = useNavigate();
+  const isAdmin = authServiceInstance.isAdmin("admin@educonnect.sg");
   const [anchorEl, setAnchorEl] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -98,18 +99,20 @@ function Header({ sections, title }) {
                   >
                     My Account
                   </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      if (email) {
-                        navigate(`/courses/${email}`);
-                      } else {
-                        console.error("Email not available");
-                      }
-                      handleMenuClose();
-                    }}
-                  >
-                    My Courses
-                  </MenuItem>{" "}
+                  {isAdmin ? null : (
+                    <MenuItem
+                      onClick={() => {
+                        if (email) {
+                          navigate(`/courses/${email}`);
+                        } else {
+                          console.error("Email not available");
+                        }
+                        handleMenuClose();
+                      }}
+                    >
+                      My Courses
+                    </MenuItem>
+                  )}
                   <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
                   <MenuItem onClick={onLogout}>Logout</MenuItem>
                 </Menu>
