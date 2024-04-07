@@ -130,3 +130,26 @@ exports.editUserByEmail = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+exports.changePasswordByEmail = async (req, res) => {
+  const { email } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    const user = await EduconnectUser.findOne({ where: { email } });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await EduconnectUser.update(
+      { password: newPassword },
+      { where: { email } }
+    );
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error("Error updating password:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};

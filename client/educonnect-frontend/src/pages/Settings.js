@@ -48,6 +48,23 @@ export default function Settings() {
   const [enableNotifications, setEnableNotifications] = useState(false);
   const [receiveNewsletter, setReceiveNewsletter] = useState(false);
   const [profileVisibility, setProfileVisibility] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handleChangePassword = async () => {
+    try {
+      if (newPassword !== confirmPassword) {
+        openSnackbar("Passwords do not match", "error");
+        return;
+      }
+
+      await profileSvcInstance.changePassword(email, newPassword);
+      openSnackbar("Password changed successfully", "success");
+    } catch (error) {
+      console.error("Error changing password:", error);
+      openSnackbar("Failed to change password", "error");
+    }
+  };
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -150,16 +167,33 @@ export default function Settings() {
                             label="Email"
                             variant="outlined"
                             fullWidth
+                            value={email}
+                            disabled
                             sx={{ mb: 2 }}
                           />
                           <TextField
-                            label="Change Password"
+                            label="New Password"
                             type="password"
                             variant="outlined"
                             fullWidth
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
                             sx={{ mb: 2 }}
                           />
-                          <Button variant="contained" color="primary">
+                          <TextField
+                            label="Confirm New Password"
+                            type="password"
+                            variant="outlined"
+                            fullWidth
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            sx={{ mb: 2 }}
+                          />
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleChangePassword}
+                          >
                             Save Changes
                           </Button>
                         </FormGroup>
@@ -206,7 +240,6 @@ export default function Settings() {
                       </FormControl>
                     </div>
                   )}
-
                   {currentTab === 3 && (
                     <div>
                       <Typography variant="h6" gutterBottom>
