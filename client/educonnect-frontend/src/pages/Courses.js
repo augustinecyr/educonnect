@@ -24,7 +24,6 @@ import coursebanner1 from "../images/coursebanner1.jpg";
 import coursebanner2 from "../images/coursebanner2.jpg";
 import coursebanner3 from "../images/coursebanner3.jpg";
 import coursebanner4 from "../images/coursebanner4.jpg";
-
 import "../index.css";
 
 const sections = [
@@ -44,12 +43,31 @@ export default function Home() {
   const [semester, setSemester] = useState("");
   // eslint-disable-next-line no-unused-vars
   const [currentCourses, setCurrentCourses] = useState([]);
-
   const [carouselImages, setCarouselImages] = useState([
-    coursebanner1,
-    coursebanner2,
-    coursebanner3,
-    coursebanner4,
+    {
+      image: coursebanner1,
+      title: "Take Breaks",
+      description:
+        "Remember to take short breaks during study sessions to stay refreshed and focused.",
+    },
+    {
+      image: coursebanner2,
+      title: "Stay Organized",
+      description:
+        "Use digital tools or apps to organize your study materials and schedule efficiently.",
+    },
+    {
+      image: coursebanner3,
+      title: "Active Learning",
+      description:
+        "Engage in active learning techniques like summarizing, teaching others, or self-quizzing to enhance understanding.",
+    },
+    {
+      image: coursebanner4,
+      title: "Limit Distractions",
+      description:
+        "Minimize distractions by setting up a dedicated study space and turning off notifications on your devices.",
+    },
   ]);
 
   useEffect(() => {
@@ -114,14 +132,18 @@ export default function Home() {
               autoPlay={true}
               interval={5000}
               infiniteLoop={true}
-              showThumbs={false} // Hide the thumbnails
+              showThumbs={false}
             >
-              {carouselImages.map((image, index) => (
+              {carouselImages.map((item, index) => (
                 <div key={index} className="carousel-item">
-                  <img src={image} alt={`Carousel ${index + 1}`} />
+                  <img src={item.image} alt={`Carousel ${index + 1}`} />
                   <div className="carousel-typography">
-                    <Typography variant="h6">Title</Typography>
-                    <Typography variant="body1">Description</Typography>
+                    <Typography variant="h6" style={{ textAlign: "left" }}>
+                      {item.title}
+                    </Typography>
+                    <Typography variant="body1" style={{ textAlign: "left" }}>
+                      {item.description}
+                    </Typography>
                   </div>
                 </div>
               ))}
@@ -160,12 +182,13 @@ export default function Home() {
                     }
                     placement="right"
                   >
-                    <Card>
+                    <Card className="course-card">
                       <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
                           {course.title}
                         </Typography>
                         <br />
+                        <div className="button-container">
                         {isAdmin ? (
                           <div>
                             <Button
@@ -193,6 +216,7 @@ export default function Home() {
                             Find Out More..
                           </Button>
                         )}
+                        </div>
                       </CardContent>
                     </Card>
                   </Tooltip>

@@ -12,6 +12,8 @@ import SnackbarContent from "@mui/material/SnackbarContent";
 import Typography from "@mui/material/Typography";
 import BarChart from "../components/BarChart";
 import DonutChart from "../components/DonutChart";
+import RadarChart from "../components/RadarChart";
+import LineGraph from "../components/LineGraph";
 
 const sections = [
   { title: "Courses", url: "/courses" },
@@ -33,6 +35,16 @@ export default function Analytics() {
   const [coursesByEmail, setCoursesByEmail] = useState(0);
   const [barChartData, setBarChartData] = useState([]);
   const [donutChartData, setDonutChartData] = useState([]);
+  const [radarChartData, setRadarChartData] = useState([]);
+  const lineGraphData = [
+    { month: "January", calls: 100 },
+    { month: "February", calls: 200 },
+    { month: "March", calls: 150 },
+    { month: "April", calls: 300 },
+    { month: "May", calls: 250 },
+    { month: "June", calls: 400 },
+    { month: "July", calls: 350 },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,7 +84,43 @@ export default function Analytics() {
           ],
         };
         setDonutChartData(donutChartData);
-        
+
+        const radarChartData = {
+          labels: [
+            "Web Development",
+            "Data Science",
+            "Computer Networking",
+            "Cybersecurity",
+            "Machine Learning",
+            "UI/UX Design",
+            "Software Engineering",
+          ],
+          datasets: [
+            {
+              label: "Average Quiz Scores",
+              data: [85, 70, 80, 75, 90, 60, 95],
+              fill: true,
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor: "rgb(255, 99, 132)",
+              pointBackgroundColor: "rgb(255, 99, 132)",
+              pointBorderColor: "#fff",
+              pointHoverBackgroundColor: "#fff",
+              pointHoverBorderColor: "rgb(255, 99, 132)",
+            },
+            {
+              label: "Assignment Completion Rate (%)",
+              data: [95, 85, 90, 80, 70, 75, 100],
+              fill: true,
+              backgroundColor: "rgba(54, 162, 235, 0.2)",
+              borderColor: "rgb(54, 162, 235)",
+              pointBackgroundColor: "rgb(54, 162, 235)",
+              pointBorderColor: "#fff",
+              pointHoverBackgroundColor: "#fff",
+              pointHoverBorderColor: "rgb(54, 162, 235)",
+            },
+          ],
+        };
+        setRadarChartData(radarChartData);
       } catch (error) {
         handleFetchError(error, "data");
       }
@@ -106,15 +154,9 @@ export default function Analytics() {
         <Typography variant="body1" gutterBottom>
           Here's a breakdown of important analytics on EduConnect.
         </Typography>
-        <Container
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: "20px",
-          }}
-        >
-          <div style={{ marginRight: "20px" }}>
+
+        <Container>
+          <div style={{ marginBottom: "40px" }}>
             <Typography variant="h6">Course Enrollment Trends</Typography>
             <BarChart data={barChartData} />
             <Typography variant="body2">
@@ -126,15 +168,29 @@ export default function Analytics() {
             </Typography>
           </div>
           {!isAdmin && (
-            <div style={{ flex: 1 }}>
+            <div style={{ marginBottom: "40px" }}>
               <Typography variant="h6">
                 Your Learning Journey Overview
               </Typography>
-              <DonutChart data={donutChartData} />
+              <div style={{ display: "flex" }}>
+                <div style={{ flex: 1, marginRight: "20px" }}>
+                  <DonutChart data={donutChartData} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <RadarChart data={radarChartData}></RadarChart>
+                </div>
+              </div>
+            </div>
+          )}
+          {isAdmin && (
+            <div style={{ marginBottom: "40px" }}>
+              <Typography variant="h6">Number of API Calls</Typography>
+              <LineGraph data={lineGraphData}></LineGraph>
             </div>
           )}
         </Container>
       </Container>
+      <br></br>
       <Footer />
       <Snackbar
         anchorOrigin={{

@@ -15,6 +15,7 @@ import authServiceInstance from "../services/AuthService";
 
 function Header({ sections, title }) {
   const navigate = useNavigate();
+  const isAdmin = authServiceInstance.isAdmin("admin@educonnect.sg");
   const [anchorEl, setAnchorEl] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -35,9 +36,9 @@ function Header({ sections, title }) {
 
   const onLogout = async () => {
     try {
-      authServiceInstance.logout();
       setSuccessMessage("Logout successfully!");
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      authServiceInstance.logout();
       navigate("/login");
     } catch (error) {
       setErrorMessage("Failed to logout!");
@@ -90,27 +91,28 @@ function Header({ sections, title }) {
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                 >
+                  {isAdmin ? null : (
+                    <MenuItem
+                      onClick={() => {
+                        if (email) {
+                          navigate(`/courses/${email}`);
+                        } else {
+                          console.error("Email not available");
+                        }
+                        handleMenuClose();
+                      }}
+                    >
+                      My Courses
+                    </MenuItem>
+                  )}
                   <MenuItem
                     onClick={() => {
-                      navigate("/profile");
+                      navigate("/settings");
                       handleMenuClose();
                     }}
                   >
-                    My Account
-                  </MenuItem>
-                  <MenuItem
-                    onClick={() => {
-                      if (email) {
-                        navigate(`/courses/${email}`);
-                      } else {
-                        console.error("Email not available");
-                      }
-                      handleMenuClose();
-                    }}
-                  >
-                    My Courses
+                    Settings
                   </MenuItem>{" "}
-                  <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
                   <MenuItem onClick={onLogout}>Logout</MenuItem>
                 </Menu>
               </>

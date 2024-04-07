@@ -15,10 +15,25 @@ class ProfileService {
 
   async editProfile(email, updatedUserInfo) {
     try {
-      const response = await axios.put(`${API_URL}/edit/userinfo/${email}`, updatedUserInfo);
+      const response = await axios.put(
+        `${API_URL}/edit/userinfo/${email}`,
+        updatedUserInfo
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching courses:", error);
+      throw error;
+    }
+  }
+
+  async changePassword(email, newPassword) {
+    try {
+      const response = await axios.put(`${API_URL}/edit/password/${email}`, {
+        newPassword,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error changing password:", error);
       throw error;
     }
   }

@@ -20,7 +20,7 @@ exports.loginUser = async (req, res) => {
     email,
     password,
   };
-  const query = "SELECT * FROM users WHERE email = ? AND password = ?";
+  const query = "SELECT * FROM educonnect_users WHERE email = ? AND password = ?";
   const params = [email, password];
 
   req.body.password = await bcrypt.hash(req.body.password, 10);

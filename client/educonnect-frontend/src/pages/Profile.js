@@ -3,11 +3,9 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import { ThemeProvider } from "@mui/material/styles";
-import Header from "../components/Header";
 import Footer from "../components/Footer";
 import theme from "../themes/Theme";
 import authServiceInstance from "../services/AuthService";
-import Typography from "@mui/material/Typography";
 import profileSvcInstance from "../services/ProfileService";
 import PersonIcon from "@mui/icons-material/Person";
 import BusinessIcon from "@mui/icons-material/Business";
@@ -23,17 +21,8 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Snackbar from "@mui/material/Snackbar";
 import SnackbarContent from "@mui/material/SnackbarContent";
-import { useNavigate } from "react-router-dom";
-import RadarChart from "../components/RadarChart";
-
-const sections = [
-  { title: "Courses", url: "/courses" },
-  { title: "Analytics", url: "/analytics" },
-  { title: "Profile", url: "#" },
-];
 
 export default function Profile() {
-  const navigate = useNavigate();
   const isAdmin = authServiceInstance.isAdmin("admin@educonnect.sg");
   const isAuthenticated = authServiceInstance.isAuthenticated();
   console.log("User has a valid token:", isAuthenticated);
@@ -58,7 +47,6 @@ export default function Profile() {
     email: true,
   });
   const [formChanged, setFormChanged] = useState(false);
-  const [radarChartData, setRadarChartData] = useState([]);
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -72,53 +60,6 @@ export default function Profile() {
     setSnackbarSeverity(severity);
     setSnackbarOpen(true);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const radarChartData = {
-          labels: [
-            "Eating",
-            "Drinking",
-            "Sleeping",
-            "Designing",
-            "Coding",
-            "Cycling",
-            "Running",
-          ],
-          datasets: [
-            {
-              label: "My First Dataset",
-              data: [65, 59, 90, 81, 56, 55, 40],
-              fill: true,
-              backgroundColor: "rgba(255, 99, 132, 0.2)",
-              borderColor: "rgb(255, 99, 132)",
-              pointBackgroundColor: "rgb(255, 99, 132)",
-              pointBorderColor: "#fff",
-              pointHoverBackgroundColor: "#fff",
-              pointHoverBorderColor: "rgb(255, 99, 132)",
-            },
-            {
-              label: "My Second Dataset",
-              data: [28, 48, 40, 19, 96, 27, 100],
-              fill: true,
-              backgroundColor: "rgba(54, 162, 235, 0.2)",
-              borderColor: "rgb(54, 162, 235)",
-              pointBackgroundColor: "rgb(54, 162, 235)",
-              pointBorderColor: "#fff",
-              pointHoverBackgroundColor: "#fff",
-              pointHoverBorderColor: "rgb(54, 162, 235)",
-            },
-          ],
-        };
-        setRadarChartData(radarChartData);
-      } catch (error) {}
-    };
-
-    fetchData();
-
-    return () => {};
-  }, []);
 
   useEffect(() => {
     async function fetchProfileInfo() {
@@ -136,10 +77,11 @@ export default function Profile() {
   const renderEditIcon = (field) => {
     return (
       <IconButton onClick={() => handleEdit(field)}>
-        <EditIcon />
+        <EditIcon color="primary" />
       </IconButton>
     );
   };
+  
 
   const handleEdit = (field) => {
     setIsEditing((prevIsEditing) => ({
@@ -152,7 +94,6 @@ export default function Profile() {
     try {
       await profileSvcInstance.editProfile(email, profileInfo);
       openSnackbar("Profile updated successfully", "success");
-      navigate("/profile");
     } catch (error) {
       console.error("Error updating profile:", error);
       openSnackbar("Failed to update profile", "error");
@@ -182,13 +123,11 @@ export default function Profile() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Header title={""} sections={sections} />
       <Container maxWidth="lg">
         <br />
         <main style={{ textAlign: "center" }}>
-          <Grid container spacing={3} justifyContent="center">
+          <Grid container spacing={1} justifyContent="center">
             <Grid item xs={12} md={8}>
-              <Typography variant="h5">Profile Information</Typography>
               {profileInfo && (
                 <div>
                   <List>
@@ -295,13 +234,6 @@ export default function Profile() {
                 </div>
               )}
             </Grid>
-            
-          {!isAdmin && (
-            <Grid item xs={12} md={4}>
-              <Typography variant="h5">My Learning Profile</Typography>
-              <RadarChart data={radarChartData} />
-            </Grid>
-             )}
           </Grid>
           <Snackbar
             anchorOrigin={{

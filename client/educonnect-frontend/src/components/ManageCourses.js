@@ -113,8 +113,8 @@ const ManageCourses = () => {
     const reader = new FileReader();
     reader.readAsDataURL(new Blob([course.attachmentUrl]));
     reader.onload = () => {
-      //    setAttachmentUrl(reader.result);
-      setAttachmentName(reader.result);
+      setAttachmentUrl(reader.result);
+      //setAttachmentName(reader.result);
       console.log(attachmentName);
     };
   };
