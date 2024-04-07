@@ -171,9 +171,7 @@ const EnrollCourse = () => {
                   <Typography variant="subtitle1" gutterBottom>
                     Course ID: {course?.courseId}
                   </Typography>
-                  <Typography variant="body1">
-                    Description: {course?.description}
-                  </Typography>
+                  <Typography variant="body1">{course?.description}</Typography>
                 </CardContent>
               </Card>
             </Grid>
