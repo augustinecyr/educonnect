@@ -114,7 +114,6 @@ const ManageCourses = () => {
     reader.readAsDataURL(new Blob([course.attachmentUrl]));
     reader.onload = () => {
       setAttachmentUrl(reader.result);
-      //setAttachmentName(reader.result);
       console.log(attachmentName);
     };
   };
@@ -164,7 +163,11 @@ const ManageCourses = () => {
   };
 
   const handleAddVideoUrl = () => {
-    setVideoUrls((prevUrls) => (prevUrls ? `${prevUrls},` : ""));
+    if (!videoUrls) {
+      setVideoUrls("https://youtu.be/");
+    } else {
+      setVideoUrls((prevUrls) => `${prevUrls},"https://youtu.be/"`);
+    }
   };
 
   return (
