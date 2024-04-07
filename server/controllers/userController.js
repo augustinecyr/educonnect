@@ -53,7 +53,7 @@ exports.createUser = async (req, res) => {
       return;
     }
 
-    const insertQuery = `INSERT INTO users (email, password) VALUES (?, ?)`;
+    const insertQuery = `INSERT INTO educonnect_users (email, password) VALUES (?, ?)`;
 
     pool.query(
       insertQuery,

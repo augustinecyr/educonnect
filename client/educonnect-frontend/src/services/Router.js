@@ -14,10 +14,10 @@ import ManageCourses from "../components/ManageCourses";
 import CreateCourse from "../components/CreateCourse";
 import PrivateRoutes from "./PrivateRoutes";
 import EnrollCourse from "../components/EnrollCourse";
-import Profile from "../pages/Profile";
 import MyCourses from "../pages/MyCourses";
 import Analytics from "../pages/Analytics";
 import AdminRoutes from "./AdminRoutes";
+import Settings from "../pages/Settings";
 
 function AppRouter() {
   return (
@@ -32,9 +32,9 @@ function AppRouter() {
         <Route element={<PrivateRoutes />}>
           <Route path="/courses" element={<Courses />} />
           <Route path="/courses/enroll/:courseId" element={<EnrollCourse />} />
-          <Route path="/profile" element={<Profile />} />
           <Route path="/courses/:email" element={<MyCourses />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
 
         <Route element={<AdminRoutes />}>

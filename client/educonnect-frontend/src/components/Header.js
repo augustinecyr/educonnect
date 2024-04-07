@@ -36,9 +36,9 @@ function Header({ sections, title }) {
 
   const onLogout = async () => {
     try {
-      authServiceInstance.logout();
       setSuccessMessage("Logout successfully!");
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      authServiceInstance.logout();
       navigate("/login");
     } catch (error) {
       setErrorMessage("Failed to logout!");
@@ -91,14 +91,6 @@ function Header({ sections, title }) {
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                 >
-                  <MenuItem
-                    onClick={() => {
-                      navigate("/profile");
-                      handleMenuClose();
-                    }}
-                  >
-                    My Account
-                  </MenuItem>
                   {isAdmin ? null : (
                     <MenuItem
                       onClick={() => {
@@ -113,7 +105,14 @@ function Header({ sections, title }) {
                       My Courses
                     </MenuItem>
                   )}
-                  <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/settings");
+                      handleMenuClose();
+                    }}
+                  >
+                    Settings
+                  </MenuItem>{" "}
                   <MenuItem onClick={onLogout}>Logout</MenuItem>
                 </Menu>
               </>
