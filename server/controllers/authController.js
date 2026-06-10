@@ -1,4 +1,4 @@
-const mysql = require("mysql");
+const mysql = require("mysql2");
 const { format } = require("date-fns");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
